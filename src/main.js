@@ -322,7 +322,7 @@ render(tripEventsElement, createTripSortTemplate());
 render(tripEventsElement, createTripContentTemplate());
 
 const tripContentElement = tripEventsElement.querySelector(`.trip-events__list`);
-render(tripContentElement, editTripEventTemplate(), 'beforebegin');
+render(tripContentElement, editTripEventTemplate(), `beforebegin`);
 
 const EVENT_COUNT = 3;
 
