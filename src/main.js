@@ -313,16 +313,16 @@ const tripControlsElement = mainTripElement.querySelector(`.trip-controls`);
 const menuTitleElement = tripControlsElement.querySelector(`h2`);
 
 render(menuTitleElement, createMenuTemplate(), `afterend`);
-render(tripControlsElement, createFilterTemplate(), `beforeend`);
+render(tripControlsElement, createFilterTemplate());
 
 const mainPageElement = document.querySelector(`.page-main`);
 const tripEventsElement = mainPageElement.querySelector(`.trip-events`);
 
-render(tripEventsElement, createTripSortTemplate(), `beforeend`);
-render(tripEventsElement, createTripContentTemplate(), `beforeend`);
+render(tripEventsElement, createTripSortTemplate());
+render(tripEventsElement, createTripContentTemplate());
 
 const tripContentElement = tripEventsElement.querySelector(`.trip-events__list`);
-render(tripContentElement, editTripEventTemplate(), `beforeend`);
+render(tripContentElement, editTripEventTemplate(), 'beforebegin');
 
 const EVENT_COUNT = 3;
 
