@@ -5,6 +5,10 @@ import {createTripSortTemplate} from './components/sort.js';
 import {createTripContentTemplate} from './components/content.js';
 import {createTripEventTemplate} from './components/event.js';
 import {editTripEventTemplate} from './components/event-edit.js';
+import {generateEvents} from './mock/event.js';
+
+const EVENT_COUNT = 10;
+const events = generateEvents(EVENT_COUNT);
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -30,9 +34,8 @@ render(tripEventsElement, createTripContentTemplate());
 const tripContentElement = tripEventsElement.querySelector(`.trip-events__list`);
 render(tripContentElement, editTripEventTemplate(), `beforebegin`);
 
-const EVENT_COUNT = 3;
-
-new Array(EVENT_COUNT).fill(``).forEach(() => {
-  render(tripContentElement, createTripEventTemplate());
-});
+render(tripContentElement, createTripEventTemplate(events[0]));
+// new Array(EVENT_COUNT).fill(``).forEach(() => {
+//   render(tripContentElement, createTripEventTemplate());
+// });
 
