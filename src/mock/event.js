@@ -21,7 +21,7 @@ const generateOffers = (offers) => {
 
 const generateEvent = () => {
   return {
-    type: `../../markup/img/icons/${getRandomArrayItem(Types)}.png`,
+    type: `../markup/img/icons/${getRandomArrayItem(Types)}.png`,
     town: getRandomArrayItem(Towns),
     photo: `http://picsum.photos/300/150?r=${Math.random()}`,
     description: getRandomArrayItem(Descriptions),
@@ -35,6 +35,5 @@ const generateEvents = (count) => {
 };
 
 export {
-  generateEvent,
   generateEvents
 };

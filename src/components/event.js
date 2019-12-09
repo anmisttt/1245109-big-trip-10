@@ -6,17 +6,17 @@ const createOffersMap = (offers) => {
     &plus;
     &euro;&nbsp;<span class="event__offer-price">20</span>
     </li>`);
-  }).join(`/n`);
+  });
 };
 
 export const createTripEventTemplate = (event) => {
-
   const {
     type,
     description,
     price,
     offers
   } = event;
+  const offersMap = createOffersMap(Array.from(offers));
   return (`<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
@@ -39,7 +39,7 @@ export const createTripEventTemplate = (event) => {
 
                     <h4 class="visually-hidden">Offers:</h4>
                     <ul class="event__selected-offers">
-                      ${createOffersMap(offers)}
+                      ${offersMap}
                     </ul>
 
                     <button class="event__rollup-btn" type="button">
