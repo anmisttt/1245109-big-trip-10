@@ -16,15 +16,24 @@ const getRandomIntegerNumber = (min, max) => {
 const generateOffers = (offers) => {
   return offers
     .filter(() => Math.random() > 0.5)
-    .slice(0, 2);
+    .slice(0, 3);
+};
+
+const generateDescription = (description) => {
+  return description
+  .filter(() => Math.random() > 0.5).slice(1, 4);
+};
+
+const generatePhotos = () => {
+  return new Array(5).fill(`http://picsum.photos/300/150?r=${Math.random()}`);
 };
 
 const generateEvent = () => {
   return {
     type: `../markup/img/icons/${getRandomArrayItem(Types)}.png`,
     town: getRandomArrayItem(Towns),
-    photo: `http://picsum.photos/300/150?r=${Math.random()}`,
-    description: getRandomArrayItem(Descriptions),
+    photos: new Array(generatePhotos()),
+    description: new Array(generateDescription(Descriptions)),
     price: getRandomIntegerNumber(1, 100),
     offers: new Set(generateOffers(Offers))
   };

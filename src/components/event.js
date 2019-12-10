@@ -3,8 +3,6 @@ const createOffersMap = (offers) => {
     return (
       `<li class="event__offer">
     <span class="event__offer-title">${offer}</span>
-    &plus;
-    &euro;&nbsp;<span class="event__offer-price">20</span>
     </li>`);
   });
 };
@@ -12,7 +10,7 @@ const createOffersMap = (offers) => {
 export const createTripEventTemplate = (event) => {
   const {
     type,
-    description,
+    town,
     price,
     offers
   } = event;
@@ -22,7 +20,7 @@ export const createTripEventTemplate = (event) => {
                     <div class="event__type">
                       <img class="event__type-icon" width="42" height="42" src=${type} alt="Event type icon">
                     </div>
-                    <h3 class="event__title">${description}</h3>
+                    <h3 class="event__title">Sightseeing at ${town}</h3>
 
                     <div class="event__schedule">
                       <p class="event__time">

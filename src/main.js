@@ -13,7 +13,6 @@ const events = generateEvents(EVENT_COUNT);
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
-
 const mainTripElement = document.querySelector(`.trip-main`);
 const infoElement = mainTripElement.querySelector(`.trip-info`);
 
@@ -32,9 +31,9 @@ render(tripEventsElement, createTripSortTemplate());
 render(tripEventsElement, createTripContentTemplate());
 
 const tripContentElement = tripEventsElement.querySelector(`.trip-events__list`);
-render(tripContentElement, editTripEventTemplate(), `beforebegin`);
+render(tripContentElement, editTripEventTemplate(events[0]), `beforebegin`);
 
-render(tripContentElement, createTripEventTemplate(events[0]));
+render(tripContentElement, createTripEventTemplate(events[1]));
 // new Array(EVENT_COUNT).fill(``).forEach(() => {
 //   render(tripContentElement, createTripEventTemplate());
 // });
