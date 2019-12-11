@@ -1,34 +1,53 @@
+import {getTime} from '../utils.js';
+import {getDate} from '../utils.js';
+import {getInterval} from '../utils.js';
+
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
     return (
       `<li class="event__offer">
     <span class="event__offer-title">${offer}</span>
     </li>`);
-  });
+  }).join(`\n`);
 };
 
 export const createTripEventTemplate = (event) => {
   const {
+    icon,
     type,
     town,
     price,
     offers
   } = event;
+
   const offersMap = createOffersMap(Array.from(offers));
+
+  let dateStart = getDate();
+  let dateEnd = getDate();
+  if (dateStart > dateEnd) {
+    [dateStart, dateEnd] = [dateEnd, dateStart];
+  }
+  let timeStart = getTime(dateStart);
+  let timeEnd = getTime(dateEnd);
+  if (timeStart > timeEnd) {
+    [timeStart, timeEnd] = [timeEnd, timeStart];
+  }
+  const interval = getInterval(dateStart, dateEnd);
+
   return (`<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
-                      <img class="event__type-icon" width="42" height="42" src=${type} alt="Event type icon">
+                      <img class="event__type-icon" width="42" height="42" src=${icon} alt="Event type icon">
                     </div>
-                    <h3 class="event__title">Sightseeing at ${town}</h3>
+                    <h3 class="event__title">${type} at ${town}</h3>
 
                     <div class="event__schedule">
                       <p class="event__time">
-                        <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+                        <time class="event__start-time" datetime="2019-03-18T10:30">${timeStart}</time>
                         &mdash;
-                        <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+                        <time class="event__end-time" datetime="2019-03-18T11:00">${timeEnd}</time>
                       </p>
-                      <p class="event__duration">1H 30M</p>
+                      <p class="event__duration">${interval}</p>
                     </div>
 
                     <p class="event__price">

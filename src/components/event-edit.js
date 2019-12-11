@@ -1,3 +1,7 @@
+import {getTime} from '../utils.js';
+import {getDate} from '../utils.js';
+import {printDate} from '../utils.js';
+
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
     return (
@@ -8,7 +12,7 @@ const createOffersMap = (offers) => {
     <span class="event__offer-title">${offer}</span>
     </label>
     </div>`);
-  });
+  }).join(` `);
 };
 
 const createPhotoMap = (photos) => {
@@ -20,20 +24,34 @@ const createPhotoMap = (photos) => {
 export const editTripEventTemplate = (event) => {
   const {
     type,
+    icon,
     town,
     photos,
     description,
     price,
     offers
   } = event;
+
   const offersMap = createOffersMap(Array.from(offers));
   const photosMap = createPhotoMap(photos);
+
+  let dateStart = getDate();
+  let dateEnd = getDate();
+  if (dateStart > dateEnd) {
+    [dateStart, dateEnd] = [dateEnd, dateStart];
+  }
+  let timeStart = getTime(dateStart);
+  let timeEnd = getTime(dateEnd);
+  if (timeStart > timeEnd) {
+    [timeStart, timeEnd] = [timeEnd, timeStart];
+  }
+
   return (`<form class="event  event--edit" action="#" method="post">
                     <header class="event__header">
                       <div class="event__type-wrapper">
                         <label class="event__type  event__type-btn" for="event-type-toggle-1">
                           <span class="visually-hidden">Choose event type</span>
-                          <img class="event__type-icon" width="17" height="17" src="${type}" alt="Event type icon">
+                          <img class="event__type-icon" width="17" height="17" src="${icon}" alt="Event type icon">
                         </label>
                         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -100,7 +118,7 @@ export const editTripEventTemplate = (event) => {
 
                       <div class="event__field-group  event__field-group--destination">
                         <label class="event__label  event__type-output" for="event-destination-1">
-                          Sightseeing at
+                          ${type}
                         </label>
                         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
                         <datalist id="destination-list-1">
@@ -112,12 +130,12 @@ export const editTripEventTemplate = (event) => {
                         <label class="visually-hidden" for="event-start-time-1">
                           From
                         </label>
-                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${printDate(dateStart)} ${timeStart}">
                         &mdash;
                         <label class="visually-hidden" for="event-end-time-1">
                           To
                         </label>
-                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${printDate(dateEnd)} ${timeEnd}">
                       </div>
 
                       <div class="event__field-group  event__field-group--price">
