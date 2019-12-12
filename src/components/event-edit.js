@@ -1,6 +1,4 @@
-import {getTime} from '../utils.js';
-import {getDate} from '../utils.js';
-import {printDate} from '../utils.js';
+import {printDate} from '../mock/event.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -29,22 +27,15 @@ export const editTripEventTemplate = (event) => {
     photos,
     description,
     price,
-    offers
+    offers,
+    dateStart,
+    dateEnd,
+    timeStart,
+    timeEnd
   } = event;
 
   const offersMap = createOffersMap(Array.from(offers));
   const photosMap = createPhotoMap(photos);
-
-  let dateStart = getDate();
-  let dateEnd = getDate();
-  if (dateStart > dateEnd) {
-    [dateStart, dateEnd] = [dateEnd, dateStart];
-  }
-  let timeStart = getTime(dateStart);
-  let timeEnd = getTime(dateEnd);
-  if (timeStart > timeEnd) {
-    [timeStart, timeEnd] = [timeEnd, timeStart];
-  }
 
   return (`<form class="event  event--edit" action="#" method="post">
                     <header class="event__header">

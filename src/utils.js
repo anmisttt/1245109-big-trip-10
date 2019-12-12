@@ -28,8 +28,7 @@ export const getDate = () => {
   const hour = Math.floor(24 * Math.random());
   const minute = Math.floor(60 * Math.random());
 
-  const date = new Date(year, month, day, hour, minute);
-  return date;
+  return new Date(year, month, day, hour, minute);
 };
 
 export const printDate = (date) => {

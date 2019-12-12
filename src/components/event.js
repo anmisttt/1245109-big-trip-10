@@ -1,7 +1,3 @@
-import {getTime} from '../utils.js';
-import {getDate} from '../utils.js';
-import {getInterval} from '../utils.js';
-
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
     return (
@@ -17,22 +13,13 @@ export const createTripEventTemplate = (event) => {
     type,
     town,
     price,
-    offers
+    offers,
+    timeStart,
+    timeEnd,
+    interval
   } = event;
 
   const offersMap = createOffersMap(Array.from(offers));
-
-  let dateStart = getDate();
-  let dateEnd = getDate();
-  if (dateStart > dateEnd) {
-    [dateStart, dateEnd] = [dateEnd, dateStart];
-  }
-  let timeStart = getTime(dateStart);
-  let timeEnd = getTime(dateEnd);
-  if (timeStart > timeEnd) {
-    [timeStart, timeEnd] = [timeEnd, timeStart];
-  }
-  const interval = getInterval(dateStart, dateEnd);
 
   return (`<li class="trip-events__item">
                   <div class="event">
