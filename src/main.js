@@ -33,8 +33,7 @@ render(tripEventsElement, createTripContentTemplate());
 const tripContentElement = tripEventsElement.querySelector(`.trip-events__list`);
 render(tripContentElement, editTripEventTemplate(events[0]), `beforebegin`);
 
-render(tripContentElement, createTripEventTemplate(events[1]));
-// new Array(EVENT_COUNT).fill(``).forEach(() => {
-//   render(tripContentElement, createTripEventTemplate());
-// });
+events.forEach((_, index) => {
+  render(tripContentElement, createTripEventTemplate(events[index]));
+});
 

@@ -8,13 +8,19 @@ export const getTime = (date) => {
   return (`${timeFormat(hours)}:${timeFormat(minutes)}`);
 };
 
+export const fromSecToDate = (sec) => {
+  const date = new Date(0, 0, 1);
+  date.setSeconds(sec);
+  return date;
+};
+
 export const getInterval = (date1, date2) => {
-  const interval = 60 * (24 * (date2.getDate() - date1.getDate()) + date2.getHours() - date1.getHours()) + date2.getMinutes() - date1.getMinutes();
+  let interval = 60 * (24 * (date2.getDate() - date1.getDate()) + date2.getHours() - date1.getHours()) + date2.getMinutes() - date1.getMinutes();
   let formatInterval;
   if (interval < 60) {
     formatInterval = `${interval}M`;
   } else if (interval < 24 * 60) {
-    formatInterval = `${date2.getHours() - date1.getHours()}H ${date2.getMinutes() - date1.getMinutes()}M}`;
+    formatInterval = `${date2.getHours() - date1.getHours()}H ${date2.getMinutes() - date1.getMinutes()}M`;
   } else {
     formatInterval = `${date2.getDate() - date1.getDate()}D ${date2.getHours() - date1.getHours()}H ${date2.getMinutes() - date1.getMinutes()}M`;
   }
@@ -22,7 +28,7 @@ export const getInterval = (date1, date2) => {
 };
 
 export const getDate = () => {
-  const year = 2000 + Math.floor(19 * Math.random());
+  const year = 1970 + Math.floor(19 * Math.random());
   const month = Math.floor(12 * Math.random());
   const day = 1 + Math.floor(31 * Math.random());
   const hour = Math.floor(24 * Math.random());

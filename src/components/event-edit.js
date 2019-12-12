@@ -1,4 +1,6 @@
-import {printDate} from '../mock/event.js';
+import {
+  printDate
+} from '../utils.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -13,10 +15,9 @@ const createOffersMap = (offers) => {
   }).join(` `);
 };
 
+
 const createPhotoMap = (photos) => {
-  return photos.map((photo) => {
-    return (`<img class="event__photo" src="${photo}" alt="Event photo">`);
-  });
+  return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`);
 };
 
 export const editTripEventTemplate = (event) => {
@@ -36,6 +37,7 @@ export const editTripEventTemplate = (event) => {
 
   const offersMap = createOffersMap(Array.from(offers));
   const photosMap = createPhotoMap(photos);
+
 
   return (`<form class="event  event--edit" action="#" method="post">
                     <header class="event__header">
