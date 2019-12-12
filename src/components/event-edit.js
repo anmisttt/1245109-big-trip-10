@@ -17,7 +17,7 @@ const createOffersMap = (offers) => {
 
 
 const createPhotoMap = (photos) => {
-  return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`);
+  return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(` `);
 };
 
 export const editTripEventTemplate = (event) => {
