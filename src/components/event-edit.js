@@ -1,6 +1,4 @@
-import {
-  printDate
-} from '../utils.js';
+import {printDate, createElement} from '../utils.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -20,7 +18,7 @@ const createPhotoMap = (photos) => {
   return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(` `);
 };
 
-export const editTripEventTemplate = (event) => {
+const editTripEventTemplate = (event) => {
   const {
     type,
     icon,
@@ -178,3 +176,27 @@ export const editTripEventTemplate = (event) => {
                     </section>
                   </form>`);
 };
+
+export default class EventEditComponent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return editTripEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
