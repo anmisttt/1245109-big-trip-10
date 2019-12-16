@@ -11,6 +11,22 @@ import {render, RenderPosition} from './utils.js';
 const EVENT_COUNT = 10;
 const events = generateEvents(EVENT_COUNT);
 
+const eventEditChange = (event) => {
+  const eventComponent = new EventComponent(event).getElement();
+  const eventEditComponent = new EventEditComponent(event).getElement();
+  const editButton = eventComponent.querySelector(`.event__rollup-btn`);
+  editButton.addEventListener(`click`, () => {
+    tripContentElement.replaceChild(eventEditComponent, eventComponent);
+  });
+
+  const editForm = eventEditComponent;
+  editForm.addEventListener(`submit`, () => {
+    tripContentElement.replaceChild(eventComponent, eventEditComponent);
+  });
+
+  render(tripContentElement, eventComponent, RenderPosition.BEFOREEND);
+};
+
 const mainTripElement = document.querySelector(`.trip-main`);
 const infoElement = mainTripElement.querySelector(`.trip-info`);
 
@@ -30,10 +46,9 @@ render(tripEventsElement, new SortComponent().getElement(), RenderPosition.BEFOR
 const contentComponent = new ContentComponent();
 render(tripEventsElement, contentComponent.getElement(), RenderPosition.BEFOREEND);
 
-const tripContentElement = contentComponent.getElement().querySelector(`.trip-events__list`);
-render(tripContentElement, new EventEditComponent(events[0]).getElement(), RenderPosition.BEFOREEND);
+const tripContentElement = contentComponent.getElement();
 
 events.forEach((_, index) => {
-  render(tripContentElement, new EventComponent(events[index]).getElement(), RenderPosition.BEFOREEND);
+  eventEditChange(events[index]);
 });
 
