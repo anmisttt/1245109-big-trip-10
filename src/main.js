@@ -5,6 +5,7 @@ import SortComponent from './components/sort.js';
 import ContentComponent from './components/content.js';
 import EventComponent from './components/event.js';
 import EventEditComponent from './components/event-edit.js';
+import NoPointsComponent from './components/no-points.js';
 import {generateEvents} from './mock/event.js';
 import {render, RenderPosition} from './utils.js';
 
@@ -12,16 +13,29 @@ const EVENT_COUNT = 10;
 const events = generateEvents(EVENT_COUNT);
 
 const eventEditChange = (event) => {
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    if (isEscKey) {
+      changeEventOnEventEdit();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   const eventComponent = new EventComponent(event).getElement();
   const eventEditComponent = new EventEditComponent(event).getElement();
   const editButton = eventComponent.querySelector(`.event__rollup-btn`);
   editButton.addEventListener(`click`, () => {
     tripContentElement.replaceChild(eventEditComponent, eventComponent);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
+
+  const changeEventOnEventEdit = () => {
+    tripContentElement.replaceChild(eventComponent, eventEditComponent);
+  };
 
   const editForm = eventEditComponent;
   editForm.addEventListener(`submit`, () => {
-    tripContentElement.replaceChild(eventComponent, eventEditComponent);
+    changeEventOnEventEdit();
   });
 
   render(tripContentElement, eventComponent, RenderPosition.BEFOREEND);
@@ -47,6 +61,10 @@ const contentComponent = new ContentComponent();
 render(tripEventsElement, contentComponent.getElement(), RenderPosition.BEFOREEND);
 
 const tripContentElement = contentComponent.getElement();
+
+if (EVENT_COUNT === 0) {
+  render(tripContentElement, new NoPointsComponent().getElement(), RenderPosition.BEFOREEND);
+}
 
 events.forEach((_, index) => {
   eventEditChange(events[index]);
