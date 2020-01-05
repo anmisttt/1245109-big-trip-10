@@ -1,8 +1,8 @@
-import ContentComponent from './components/content.js';
-import EventComponent from './components/event.js';
-import EventEditComponent from './components/event-edit.js';
-import NoPointsComponent from './components/no-points.js';
-import {render, replace, RenderPosition} from './utils/render.js';
+import ContentComponent from '../components/content.js';
+import EventComponent from '../components/event.js';
+import EventEditComponent from '../components/event-edit.js';
+import NoPointsComponent from '../components/no-points.js';
+import {render, replace, RenderPosition} from '../utils/render.js';
 
 const renderEvent = (tripContentElement, event) => {
   const onEscKeyDown = (evt) => {
@@ -42,7 +42,7 @@ export default class TripController {
     this._noPintsComponent = new NoPointsComponent();
   }
   render(events) {
-    const container = this._container.getElement();
+    const container = this._container;
     render(container, this._contentComponent, RenderPosition.BEFOREEND);
 
     const tripContentElement = this._contentComponent.getElement();
@@ -52,7 +52,7 @@ export default class TripController {
     }
 
     events.forEach((_, index) => {
-      renderEvent(events[index]);
+      renderEvent(tripContentElement, events[index]);
     });
   }
 }
