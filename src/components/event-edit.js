@@ -1,4 +1,5 @@
-import {printDate, createElement} from '../utils.js';
+import {printDate} from '../utils/common.js';
+import AbstractComponent from './abstract-component.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -177,26 +178,19 @@ const editTripEventTemplate = (event) => {
                   </form>`);
 };
 
-export default class EventEditComponent {
+export default class EventEditComponent extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return editTripEventTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setEventEditSubmitHandler(handler) {
+    this.getElement()
+       .addEventListener(`submit`, handler);
   }
 }
 

@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createFilterTemplate = () => {
   return (`<form class="trip-filters" action="#" method="get">
@@ -21,24 +21,8 @@ const createFilterTemplate = () => {
             </form>`);
 };
 
-export default class FilterComponent {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilterComponent extends AbstractComponent {
   getTemplate() {
     return createFilterTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeTemplate() {
-    this._element = null;
   }
 }

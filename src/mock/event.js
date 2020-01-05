@@ -1,4 +1,4 @@
-import {getDate, getTime, fromSecToDate} from '../utils.js';
+import {getDate, getTime, fromSecToDate} from '../utils/common.js';
 
 const EventConsts = {
   Types: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`, `Trip`],
