@@ -1,7 +1,6 @@
 import TripInfoComponent from './components/trip-info.js';
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
-import SortComponent from './components/sort.js';
 import TripControllerComponent from './controllers/trip-controller.js';
 import {generateEvents} from './mock/event.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -23,8 +22,6 @@ render(tripControlsElement, new FilterComponent(), RenderPosition.BEFOREEND);
 
 const mainPageElement = document.querySelector(`.page-main`);
 const tripEventsElement = mainPageElement.querySelector(`.trip-events`);
-
-render(tripEventsElement, new SortComponent(), RenderPosition.BEFOREEND);
 
 const tripControllerElement = new TripControllerComponent(tripEventsElement);
 tripControllerElement.render(events);
