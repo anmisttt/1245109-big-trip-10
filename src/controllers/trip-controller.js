@@ -1,39 +1,15 @@
 import ContentComponent from '../components/content.js';
-import EventComponent from '../components/event.js';
-import EventEditComponent from '../components/event-edit.js';
 import NoPointsComponent from '../components/no-points.js';
 import SortComponent, {SortType} from '../components/sort.js';
-import {render, replace, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition} from '../utils/render.js';
+import PointController from './point-controller.js';
 
-const renderEvent = (tripContentElement, event) => {
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      changeEventOnEventEdit();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const eventComponent = new EventComponent(event);
-  const eventEditComponent = new EventEditComponent(event);
-  eventComponent.setEventClickHandler(() => {
-    changeEventEditOnEvent(eventEditComponent, eventComponent);
-    document.addEventListener(`keydown`, onEscKeyDown);
+const renderEvents = (events, container, onDataChange) => {
+  return events.map((event) => {
+    const pointController = new PointController(container, onDataChange);
+    pointController.renderEvent(event);
+    return pointController;
   });
-
-  const changeEventOnEventEdit = () => {
-    replace(eventComponent, eventEditComponent);
-  };
-
-  const changeEventEditOnEvent = () => {
-    replace(eventEditComponent, eventComponent);
-  };
-
-  eventEditComponent.setEventEditSubmitHandler(() => {
-    changeEventOnEventEdit();
-  });
-
-  render(tripContentElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 export default class TripController {
@@ -42,6 +18,7 @@ export default class TripController {
     this._contentComponent = new ContentComponent();
     this._noPintsComponent = new NoPointsComponent();
     this._sortComponent = new SortComponent();
+    this._onDataChange = this._onDataChange.bind(this);
   }
   render(events) {
     const container = this._container;
@@ -53,9 +30,7 @@ export default class TripController {
       render(tripContentElement, this._noPintsComponent, RenderPosition.BEFOREEND);
     }
 
-    events.forEach((_, index) => {
-      renderEvent(tripContentElement, events[index]);
-    });
+    renderEvents(events, tripContentElement, this._onDataChange);
 
     render(tripContentElement, this._sortComponent, RenderPosition.AFTERBEGIN);
 
@@ -73,8 +48,20 @@ export default class TripController {
           break;
       }
       tripContentElement.innerHTML = ``;
-      renderEvent(tripContentElement, sortedEvents);
+      renderEvents(sortedEvents, tripContentElement, this._onDataChange);
     });
+  }
+
+  _onDataChange(pointController, oldData, newData) {
+    const index = this._events.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
+
+    pointController.renderEvent(this._events[index]);
   }
 
 }

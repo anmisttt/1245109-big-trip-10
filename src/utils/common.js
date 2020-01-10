@@ -1,3 +1,5 @@
+// import moment from 'moment';
+
 export const getTime = (date) => {
   const hours = date.getHours();
   const minutes = date.getMinutes();

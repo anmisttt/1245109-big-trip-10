@@ -1,7 +1,7 @@
 import {getDate, getTime, fromSecToDate} from '../utils/common.js';
 
 const EventConsts = {
-  Types: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`, `Trip`],
+  Types: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`],
   Towns: [`London`, `Tallin`, `Berlin`, `Paris`, `Moscow`],
   Descriptions: (`Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
   Cras aliquet varius magna, non porta ligula feugiat eget. 
@@ -44,9 +44,13 @@ const generateEvent = () => {
   const endDate = fromSecToDate(+startDate + +getDate());
   const startTime = getTime(startDate);
   const endTime = getTime(endDate);
+  const randomType = getRandomArrayItem(EventConsts.Types);
   return {
-    type: getRandomArrayItem(EventConsts.Types),
-    icon: `img/icons/${getRandomArrayItem(EventConsts.Types)}.png`,
+    transportTypes: EventConsts.Types.slice(0, 6),
+    activityTypes: EventConsts.Types.slice(7, 10),
+    type: randomType,
+    icon: `img/icons/${randomType}.png`,
+    towns: EventConsts.Towns,
     town: getRandomArrayItem(EventConsts.Towns),
     photos: generatePhotos(),
     description: new Array(generateDescription(EventConsts.Descriptions)),
