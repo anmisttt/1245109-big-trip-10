@@ -21,22 +21,22 @@ const getRandomArrayItem = (array) => {
 };
 
 const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(max * Math.random());
+  return min + Math.floor((max - min) * Math.random());
 };
 
 const generateOffers = (offers) => {
   return offers
     .filter(() => Math.random() > 0.5)
-    .slice(0, 2);
-};
-
-const generateDescription = (description) => {
-  return description
-  .filter(() => Math.random() > 0.5).slice(0, 3);
+    .slice(0, 3);
 };
 
 const generatePhotos = () => {
   return new Array(5).fill(``).map(() => `http://picsum.photos/300/150?r=${Math.random()}`);
+};
+
+const generateDescription = (description) => {
+  return description
+    .filter(() => Math.random() > 0.5).slice(0, 3);
 };
 
 const generateEvent = () => {
@@ -53,9 +53,11 @@ const generateEvent = () => {
     towns: EventConsts.Towns,
     town: getRandomArrayItem(EventConsts.Towns),
     photos: generatePhotos(),
+    descriptionList: EventConsts.Descriptions,
     description: new Array(generateDescription(EventConsts.Descriptions)),
     price: getRandomIntegerNumber(1, 100),
     offers: new Set(generateOffers(EventConsts.Offers)),
+    offersList: EventConsts.Offers,
     dateStart: startDate,
     dateEnd: endDate,
     timeStart: startTime,
@@ -68,5 +70,7 @@ const generateEvents = (count) => {
 };
 
 export {
-  generateEvents
+  generateEvents,
+  generateDescription,
+  generateOffers
 };

@@ -2,13 +2,21 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class PointController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
+
+    this._mode = Mode.DEFAULT;
   }
   renderEvent(event) {
     this._eventComponent = new EventComponent(event);
@@ -19,9 +27,9 @@ export default class PointController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setEventEditSubmitHandler(() => {
+    this._eventEditComponent.setSubmitHandler((evt) => {
+      evt.preventDefault();
       this._changeEventEditOnEvent();
-      this.rerender();
     });
 
     this._eventEditComponent.setFavoriteClickHandler(() => {
@@ -34,19 +42,30 @@ export default class PointController {
   }
 
   _changeEventEditOnEvent() {
+    this._eventEditComponent.reset();
     replace(this._eventComponent, this._eventEditComponent);
-    this._eventEditComponent.rerender();
+    this._mode = Mode.DEFAULT;
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _changeEventOnEventEdit() {
     replace(this._eventEditComponent, this._eventComponent);
+    this._onViewChange();
+    this._mode = Mode.EDIT;
   }
+
 
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
       this._changeEventEditOnEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
+    }
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._changeEventEditOnEvent();
     }
   }
 }

@@ -2,7 +2,9 @@
 // import 'flatpickr/dist/flatpickr.min.css';
 // import 'flatpickr/dist/themes/light.css';
 import {printDate} from '../utils/common.js';
+import {generateDescription, generateOffers} from '../mock/event.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+// import {relativeTimeThreshold} from 'moment';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -16,7 +18,6 @@ const createOffersMap = (offers) => {
     </div>`);
   }).join(` `);
 };
-
 
 const createPhotoMap = (photos) => {
   return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(` `);
@@ -40,10 +41,10 @@ const editTripEventTemplate = (event) => {
   const {
     transportTypes,
     activityTypes,
+    description,
     type,
     icon,
     photos,
-    description,
     price,
     towns,
     town,
@@ -155,15 +156,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._submitHandler = null;
   }
 
   getTemplate() {
     return editTripEventTemplate(this._event);
-  }
-
-  setEventEditSubmitHandler(handler) {
-    this.getElement()
-       .addEventListener(`submit`, handler);
   }
 
   setFavoriteClickHandler(handler) {
@@ -172,11 +169,50 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this._subscribeOnEvents();
   }
 
   setSubmitHandler(handler) {
-    this.getElement().querySelector(`form`)
-      .addEventListener(`submit`, handler);
+    this.getElement().addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  reset() {
+    // this._event.type = this.getElement().querySelector(`.event__type-output`);
+    this._event.town = this.getElement().querySelector(`.event__input--destination`).value;
+    this._event.price = this.getElement().querySelector(`.event__input--price`).value;
+    this.rerender();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    const types = element.querySelectorAll(`.event__type-input`);
+
+    types.forEach((type)=> {
+      type.addEventListener(`click`, () => {
+        this._event.type = type.value;
+        this._event.icon = `img/icons/${type.value}.png`;
+        this._event.offers = new Set(generateOffers(this._event.offersList));
+        this.rerender();
+      });
+    });
+
+    const town = element.querySelector(`.event__input--destination`);
+    town.addEventListener(`change`, () => {
+      this._event.town = town.value;
+      this._event.description = new Array(generateDescription(this._event.descriptionList));
+      this.rerender();
+    });
+
+
+    const price = element.querySelector(`.event__input--price`);
+    price.addEventListener(`change`, () => {
+      this._event.price = price.value;
+      this.rerender();
+    });
   }
 }
 
