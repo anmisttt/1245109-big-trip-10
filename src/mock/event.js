@@ -1,4 +1,4 @@
-import {getDate, getTime, fromSecToDate} from '../utils/common.js';
+import {getDate, getTime, getRandomIntegerNumber} from '../utils/common.js';
 
 const EventConsts = {
   Types: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`],
@@ -20,10 +20,6 @@ const getRandomArrayItem = (array) => {
   return array[randomIndex];
 };
 
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor((max - min) * Math.random());
-};
-
 const generateOffers = (offers) => {
   return offers
     .filter(() => Math.random() > 0.5)
@@ -41,7 +37,7 @@ const generateDescription = (description) => {
 
 const generateEvent = () => {
   const startDate = getDate();
-  const endDate = fromSecToDate(+startDate + +getDate());
+  const endDate = getDate();
   const startTime = getTime(startDate);
   const endTime = getTime(endDate);
   const randomType = getRandomArrayItem(EventConsts.Types);

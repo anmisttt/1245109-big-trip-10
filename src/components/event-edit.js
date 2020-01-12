@@ -1,10 +1,9 @@
-// import flatpickr from 'flatpickr';
-// import 'flatpickr/dist/flatpickr.min.css';
-// import 'flatpickr/dist/themes/light.css';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 import {printDate} from '../utils/common.js';
 import {generateDescription, generateOffers} from '../mock/event.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
-// import {relativeTimeThreshold} from 'moment';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -157,6 +156,10 @@ export default class EventEditComponent extends AbstractSmartComponent {
     super();
     this._event = event;
     this._submitHandler = null;
+    this._flatpickr = null;
+
+    this._applyFlatpickr();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -179,11 +182,37 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
   reset() {
-    // this._event.type = this.getElement().querySelector(`.event__type-output`);
     this._event.town = this.getElement().querySelector(`.event__input--destination`).value;
     this._event.price = this.getElement().querySelector(`.event__input--price`).value;
     this.rerender();
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
+      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+    this._flatpickr = flatpickr(startDateElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._event.dateStart,
+    });
+    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+    this._flatpickr = flatpickr(endDateElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._event.dateEnd,
+    });
+
   }
 
   _subscribeOnEvents() {
