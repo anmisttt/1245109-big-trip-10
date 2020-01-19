@@ -1,9 +1,10 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {printDate} from '../utils/common.js';
-import {generateDescription, generateOffers} from '../mock/event.js';
+import {printDate, getTime} from '../utils/common.js';
+import {generatePhotos, generateDescription, generateOffers} from '../mock/event.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+import {EventConsts} from '../const.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
@@ -36,12 +37,39 @@ const createTypesList = (types) => {
   }).join(` `);
 };
 
+const parseFormData = (formData) => {
+  const startDate = formData.get(`event-start-time`);
+  const endDate = formData.get(`event-end-time`);
+  const startTime = getTime(startDate);
+  const endTime = getTime(endDate);
+  const currentType = formData.get(`event_type`);
+
+  return {
+    transportTypes: EventConsts.Types.slice(0, 6),
+    activityTypes: EventConsts.Types.slice(7, 10),
+    description: new Array(generateDescription(EventConsts.Descriptions)),
+    photos: generatePhotos(),
+    towns: EventConsts.Towns,
+    offers: new Set(generateOffers(EventConsts.Offers)),
+    descriptionList: EventConsts.Descriptions,
+    offersList: EventConsts.Offers,
+    icon: `img/icons/${currentType}.png`,
+    type: currentType,
+    town: formData.get(`event-destination`),
+    price: formData.get(`event-price`),
+    dateStart: startDate,
+    dateEnd: endDate,
+    timeStart: startTime,
+    timeEnd: endTime
+  };
+};
+
 const editTripEventTemplate = (event) => {
   const {
     transportTypes,
     activityTypes,
-    description,
     type,
+    description,
     icon,
     photos,
     price,
@@ -82,7 +110,7 @@ const editTripEventTemplate = (event) => {
                       </div>
 
                       <div class="event__field-group  event__field-group--destination">
-                        <label class="event__label  event__type-output" for="event-destination-1">
+                        <label class="event__label  event__type-output" name="event_type" for="event-destination-1">
                           ${type}
                         </label>
                         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
@@ -157,13 +185,22 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._event = event;
     this._submitHandler = null;
     this._flatpickr = null;
-
+    this._deleteButtonClickHandler = null;
     this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
   getTemplate() {
     return editTripEventTemplate(this._event);
+  }
+
+  removeElement() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    super.removeElement();
   }
 
   setFavoriteClickHandler(handler) {
@@ -174,6 +211,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
   }
 
   setSubmitHandler(handler) {
@@ -191,6 +229,20 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._event.town = this.getElement().querySelector(`.event__input--destination`).value;
     this._event.price = this.getElement().querySelector(`.event__input--price`).value;
     this.rerender();
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+
+    this._deleteButtonClickHandler = handler;
+  }
+
+  getData() {
+    const form = this.getElement();
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
   }
 
   _applyFlatpickr() {
