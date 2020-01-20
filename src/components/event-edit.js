@@ -6,13 +6,13 @@ import {generatePhotos, generateDescription, generateOffers} from '../mock/event
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
-const createOffersMap = (offers) => {
+const createOffersMap = (offers, type) => {
   return offers.map((offer) => {
     return (
       `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" 
-    type="checkbox" name="event-offer-train">
-    <label class="event__offer-label" for="event-offer-train-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" 
+    type="checkbox" name="event-offer-${type}">
+    <label class="event__offer-label" for="event-offer-${type}-1">
     <span class="event__offer-title">${offer}</span>
     </label>
     </div>`);
@@ -29,11 +29,12 @@ const createTownsList = (towns) => {
   });
 };
 
-const createTypesList = (types) => {
+const createTypesList = (types, currentType) => {
   return types.map((type) => {
     return (`<div class="event__type-item">
-  <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-  <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type}">${type}</label></div>`);
+  <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}"
+  ${currentType === type ? `checked` : ``}>
+  <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type}-1">${type}</label></div>`);
   }).join(` `);
 };
 
@@ -42,7 +43,7 @@ const parseFormData = (formData) => {
   const endDate = formData.get(`event-end-time`);
   const startTime = getTime(startDate);
   const endTime = getTime(endDate);
-  const currentType = formData.get(`event_type`);
+  const currentType = formData.get(`event-type`);
 
   return {
     transportTypes: EventConsts.Types.slice(0, 6),
@@ -82,13 +83,13 @@ const editTripEventTemplate = (event) => {
     timeEnd
   } = event;
 
-  const offersMap = createOffersMap(Array.from(offers));
+  const offersMap = createOffersMap(Array.from(offers), type);
   const photosMap = createPhotoMap(photos);
   const townsList = createTownsList(towns);
-  const transportTypesList = createTypesList(transportTypes);
-  const activityTypesList = createTypesList(activityTypes);
+  const transportTypesList = createTypesList(transportTypes, type);
+  const activityTypesList = createTypesList(activityTypes, type);
 
-  return (`<form class="event  event--edit" action="#" method="post">
+  return (`<form class="event  trip-events__item event--edit" action="#" method="post">
                     <header class="event__header">
                       <div class="event__type-wrapper">
                         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -110,7 +111,7 @@ const editTripEventTemplate = (event) => {
                       </div>
 
                       <div class="event__field-group  event__field-group--destination">
-                        <label class="event__label  event__type-output" name="event_type" for="event-destination-1">
+                        <label class="event__label  event__type-output"  for="event-destination-1">
                           ${type}
                         </label>
                         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
@@ -273,7 +274,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const types = element.querySelectorAll(`.event__type-input`);
 
     types.forEach((type)=> {
-      type.addEventListener(`click`, () => {
+      type.addEventListener(`change`, () => {
         this._event.type = type.value;
         this._event.icon = `img/icons/${type.value}.png`;
         this._event.offers = new Set(generateOffers(this._event.offersList));

@@ -42,7 +42,7 @@ export default class TripController {
 
     this._showedEvents = renderEvents(events, tripContentElement, this._onDataChange, this._onViewChange);
 
-    render(tripContentElement, this._sortComponent, RenderPosition.AFTERBEGIN);
+    render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
 
     this._sortComponent.changeSortTypeHandler((sortType) => {
       let sortedEvents = [];

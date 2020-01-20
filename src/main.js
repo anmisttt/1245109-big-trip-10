@@ -2,6 +2,7 @@ import TripInfoComponent from './components/trip-info.js';
 import MenuComponent from './components/menu.js';
 import FilterController from './controllers/filter-controller.js';
 import TripController from './controllers/trip-controller.js';
+import MainContentComponent from './components/main-content.js';
 import PointsModel from './models/point.js';
 import {generateEvents} from './mock/event.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -28,9 +29,10 @@ render(menuTitleElement, new MenuComponent(), RenderPosition.BEFOREEND);
 const filterController = new FilterController(tripControlsElement, pointsModel);
 filterController.render();
 
-const mainPageElement = document.querySelector(`.page-main`);
-const tripEventsElement = mainPageElement.querySelector(`.trip-events`);
+const pageBodyContainer = document.querySelectorAll(`.page-body__container`)[1];
+const mainContentElement = new MainContentComponent();
+render(pageBodyContainer, mainContentElement, RenderPosition.BEFOREEND);
 
-const tripControllerElement = new TripController(tripEventsElement, pointsModel);
+const tripControllerElement = new TripController(mainContentElement.getElement(), pointsModel);
 tripControllerElement.render();
 
