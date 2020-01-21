@@ -4,6 +4,8 @@ import SortComponent, {SortType} from '../components/sort.js';
 import {render, RenderPosition} from '../utils/render.js';
 import PointController, {Mode as EventControllerMode, EmptyPoint} from './point-controller.js';
 
+const HIDDEN_CLASS = `visually-hidden`;
+
 const renderEvents = (events, container, onDataChange, onViewChange) => {
   return events.map((event) => {
     const pointController = new PointController(container, onDataChange, onViewChange);
@@ -18,7 +20,7 @@ export default class TripController {
     this._pointsModel = pointsModel;
 
     this._contentComponent = new ContentComponent();
-    this._noPintsComponent = new NoPointsComponent();
+    this._noPointsComponent = new NoPointsComponent();
     this._sortComponent = new SortComponent();
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -29,6 +31,15 @@ export default class TripController {
     this._creatingPoint = null;
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
+
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._container.classList.remove(HIDDEN_CLASS);
+  }
+
   render() {
     const container = this._container;
     render(container, this._contentComponent, RenderPosition.BEFOREEND);
@@ -37,7 +48,7 @@ export default class TripController {
     const tripContentElement = this._contentComponent.getElement();
 
     if (events.length === 0) {
-      render(tripContentElement, this._noPintsComponent, RenderPosition.BEFOREEND);
+      render(tripContentElement, this._noPointsComponent, RenderPosition.BEFOREEND);
     }
 
     this._showedEvents = renderEvents(events, tripContentElement, this._onDataChange, this._onViewChange);
@@ -92,17 +103,17 @@ export default class TripController {
         pointController.renderEvent(newData, EventControllerMode.DEFAULT);
       }
     }
-    const events = this._pointsModel.getPoints();
+    // const events = this._pointsModel.getPoints();
 
-    const index = events.findIndex((it) => it === oldData);
+    // const index = events.findIndex((it) => it === oldData);
 
-    if (index === -1) {
-      return;
-    }
+    // if (index === -1) {
+    //   return;
+    // }
 
-    events = [].concat(events.slice(0, index), newData, events.slice(index + 1));
+    // events = [].concat(events.slice(0, index), newData, events.slice(index + 1));
 
-    pointController.renderEvent(events[index]);
+    // pointController.renderEvent(events[index]);
   }
 
   _onViewChange() {
