@@ -1,8 +1,8 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {EventConsts} from '../const.js';
-import {generatePhotos, generateDescription, generateOffers} from '../mock/event.js';
+import PointModel from '../models/point.js';
+import {destinationsApi, offersApi} from '../main.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -11,22 +11,28 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
-  transportTypes: EventConsts.Types.slice(0, 6),
-  activityTypes: EventConsts.Types.slice(7, 10),
-  type: ``,
-  description: new Array(generateDescription(EventConsts.Descriptions)),
-  icon: ``,
-  photos: generatePhotos(),
+  type: `taxi`,
+  destination: {},
+  icon: `img/icons/taxi.png`,
+  photos: [],
   price: ``,
-  towns: EventConsts.Towns,
   town: ``,
-  offers: new Set(generateOffers(EventConsts.Offers)),
-  descriptionList: EventConsts.Descriptions,
-  offersList: EventConsts.Offers,
+  offers: [],
   dateStart: null,
   dateEnd: null,
-  timeStart: null,
-  timeEnd: null
+};
+
+const parseFormData = (formData, destinations, offers) => {
+  const currentType = formData.get(`event-type`);
+  return new PointModel({
+    'offers': (currentType) ? offers.filter((offer) => offer.type === currentType.toLowerCase()).map((it) => it.offers)[0] : [],
+    'type': (currentType) ? currentType.toLowerCase() : ``,
+    'destination': destinations.filter((destination) => destination.name === formData.get(`event-destination`))[0],
+    'base_price': Number(formData.get(`event-price`)),
+    'date_from': formData.get(`event-start-time`) ? new Date(formData.get(`event-start-time`)) : null,
+    'date_to': formData.get(`event-end-time`) ? new Date(formData.get(`event-end-time`)) : null,
+    'is_favorite': false
+  });
 };
 
 export default class PointController {
@@ -54,14 +60,21 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._eventEditComponent.getData();
-      this._onDataChange(this, event, data);
+      offersApi.then((offer)=>{
+        destinationsApi.then((destination)=>{
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, destination, offer);
+          this._onDataChange(this, event, data);
+        });
+      });
     });
 
     this._eventEditComponent.setFavoriteClickHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite,
-      }));
+      const newPoint = PointModel.clone(event);
+      newPoint.isFavorite = !newPoint.isFavorite;
+
+      this._onDataChange(this, event, newPoint);
+
     });
 
     switch (mode) {

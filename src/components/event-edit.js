@@ -3,7 +3,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 import {printDate, getTime} from '../utils/common.js';
-import {generatePhotos, generateDescription, generateOffers} from '../mock/event.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
@@ -14,7 +13,8 @@ const createOffersMap = (offers, type) => {
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" 
     type="checkbox" name="event-offer-${type}">
     <label class="event__offer-label" for="event-offer-${type}-1">
-    <span class="event__offer-title">${offer}</span>
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
     </label>
     </div>`);
   }).join(` `);
@@ -39,56 +39,26 @@ const createTypesList = (types, currentType) => {
   }).join(` `);
 };
 
-const parseFormData = (formData) => {
-  const startDate = formData.get(`event-start-time`);
-  const endDate = formData.get(`event-end-time`);
-  const startTime = getTime(startDate);
-  const endTime = getTime(endDate);
-  const currentType = formData.get(`event-type`);
-
-  return {
-    transportTypes: EventConsts.Types.slice(0, 6),
-    activityTypes: EventConsts.Types.slice(7, 10),
-    description: new Array(generateDescription(EventConsts.Descriptions)),
-    photos: generatePhotos(),
-    towns: EventConsts.Towns,
-    offers: new Set(generateOffers(EventConsts.Offers)),
-    descriptionList: EventConsts.Descriptions,
-    offersList: EventConsts.Offers,
-    icon: `img/icons/${currentType}.png`,
-    type: currentType,
-    town: formData.get(`event-destination`),
-    price: formData.get(`event-price`),
-    dateStart: startDate,
-    dateEnd: endDate,
-    timeStart: startTime,
-    timeEnd: endTime
-  };
-};
-
 const editTripEventTemplate = (event) => {
   const {
-    transportTypes,
-    activityTypes,
     type,
     description,
     icon,
     photos,
     price,
-    towns,
     town,
     offers,
     dateStart,
     dateEnd,
-    timeStart,
-    timeEnd
   } = event;
 
   const offersMap = createOffersMap(Array.from(offers), type);
   const photosMap = createPhotoMap(photos);
-  const townsList = createTownsList(towns);
-  const transportTypesList = createTypesList(transportTypes, type);
-  const activityTypesList = createTypesList(activityTypes, type);
+  const townsList = createTownsList(EventConsts.Towns);
+  const timeStart = getTime(dateStart);
+  const timeEnd = getTime(dateEnd);
+  const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
+  const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
 
   return (`<form class="event  trip-events__item event--edit" action="#" method="post">
                     <header class="event__header">
@@ -242,9 +212,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
   _applyFlatpickr() {
@@ -278,7 +247,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
       type.addEventListener(`change`, () => {
         this._event.type = type.value;
         this._event.icon = `img/icons/${type.value}.png`;
-        this._event.offers = new Set(generateOffers(this._event.offersList));
         this.rerender();
       });
     });
@@ -286,7 +254,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const town = element.querySelector(`.event__input--destination`);
     town.addEventListener(`change`, () => {
       this._event.town = town.value;
-      this._event.description = new Array(generateDescription(this._event.descriptionList));
+
       this.rerender();
     });
 

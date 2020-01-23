@@ -15,9 +15,10 @@ const renderEvents = (events, container, onDataChange, onViewChange) => {
 };
 
 export default class TripController {
-  constructor(container, pointsModel) {
+  constructor(container, pointsModel, api) {
     this._container = container;
     this._pointsModel = pointsModel;
+    this._api = api;
 
     this._contentComponent = new ContentComponent();
     this._noPointsComponent = new NoPointsComponent();
@@ -98,10 +99,14 @@ export default class TripController {
       this._pointsModel.removePoint(oldData.id);
       this._updateEvents();
     } else {
-      const isSuccess = this._pointsModel.updatePoints(oldData.id, newData);
-      if (isSuccess) {
-        pointController.renderEvent(newData, EventControllerMode.DEFAULT);
-      }
+      this._api.updatePoint(oldData.id, newData).then((pointModel) => {
+        newData.id = oldData.id;
+        const isSuccess = this._pointsModel.updatePoints(oldData.id, newData);
+        if (isSuccess) {
+          pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
+          this._updateEvents();
+        }
+      });
     }
     // const events = this._pointsModel.getPoints();
 

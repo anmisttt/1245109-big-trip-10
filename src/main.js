@@ -1,17 +1,20 @@
+import API from './api.js';
 import TripInfoComponent from './components/trip-info.js';
 import MenuComponent, {MenuItem} from './components/menu.js';
 import FilterController from './controllers/filter-controller.js';
 import TripController from './controllers/trip-controller.js';
 import MainContentComponent from './components/main-content.js';
 import StatsComponent from './components/stats.js';
-import PointsModel from './models/point.js';
-import {generateEvents} from './mock/event.js';
+import PointsModel from './models/points.js';
+
 import {render, RenderPosition} from './utils/render.js';
 
-const EVENT_COUNT = 10;
-const events = generateEvents(EVENT_COUNT);
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
+const api = new API(END_POINT, AUTHORIZATION);
+
 const pointsModel = new PointsModel();
-pointsModel.setPoints(events);
 
 const mainTripElement = document.querySelector(`.trip-main`);
 const infoElement = mainTripElement.querySelector(`.trip-info`);
@@ -34,12 +37,11 @@ const pageBodyContainer = document.querySelectorAll(`.page-body__container`)[1];
 const mainContentElement = new MainContentComponent();
 render(pageBodyContainer, mainContentElement, RenderPosition.BEFOREEND);
 
-const statsComponent = new StatsComponent(events);
+const statsComponent = new StatsComponent(pointsModel.getPoints());
 render(pageBodyContainer, statsComponent, RenderPosition.BEFOREEND);
 
-const tripControllerElement = new TripController(mainContentElement.getElement(), pointsModel);
+const tripControllerElement = new TripController(mainContentElement.getElement(), pointsModel, api);
 statsComponent.hide();
-tripControllerElement.render();
 
 menuComponent.setOnChange((menuItem)=>{
   switch (menuItem) {
@@ -53,3 +55,13 @@ menuComponent.setOnChange((menuItem)=>{
       break;
   }
 });
+
+export const destinationsApi = api.getDestinations();
+export const offersApi = api.getOffers();
+
+api.getPoints().then((points) => {
+  pointsModel.setPoints(points);
+  tripControllerElement.render();
+});
+
+

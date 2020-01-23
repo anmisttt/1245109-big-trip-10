@@ -7,6 +7,7 @@ const getRandomArrayItem = (array) => {
 };
 
 const generateOffers = (offers) => {
+  console.log(offers);
   return offers
     .filter(() => Math.random() > 0.5)
     .slice(0, 3);

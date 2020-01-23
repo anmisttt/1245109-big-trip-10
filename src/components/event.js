@@ -1,11 +1,12 @@
-import {getInterval} from '../utils/common.js';
+import {getInterval, getTime} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 const createOffersMap = (offers) => {
   return offers.map((offer) => {
     return (
       `<li class="event__offer">
-    <span class="event__offer-title">${offer}</span>
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
     </li>`);
   }).join(`\n`);
 };
@@ -18,13 +19,13 @@ const createTripEventTemplate = (event) => {
     price,
     offers,
     dateStart,
-    dateEnd,
-    timeStart,
-    timeEnd
+    dateEnd
   } = event;
 
   const offersMap = createOffersMap(Array.from(offers));
   const interval = getInterval(dateStart, dateEnd);
+  const timeStart = getTime(dateStart);
+  const timeEnd = getTime(dateEnd);
 
   return (`<li class="trip-events__item">
                   <div class="event">
