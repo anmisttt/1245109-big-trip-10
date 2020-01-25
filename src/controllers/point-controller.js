@@ -22,6 +22,8 @@ export const EmptyPoint = {
   dateEnd: null,
 };
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const parseFormData = (formData, destinations, offers) => {
   const currentType = formData.get(`event-type`);
   return new PointModel({
@@ -60,6 +62,9 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
+      this._eventEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
       offersApi.then((offer)=>{
         destinationsApi.then((destination)=>{
           const formData = this._eventEditComponent.getData();
@@ -75,6 +80,13 @@ export default class PointController {
 
       this._onDataChange(this, event, newPoint);
 
+    });
+
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+      this._onDataChange(this, event, null);
     });
 
     switch (mode) {
@@ -97,6 +109,22 @@ export default class PointController {
         break;
     }
   }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
 
   _changeEventEditOnEvent() {
     this._eventEditComponent.reset();

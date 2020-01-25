@@ -38,12 +38,13 @@ const mainContentElement = new MainContentComponent();
 render(pageBodyContainer, mainContentElement, RenderPosition.BEFOREEND);
 
 const statsComponent = new StatsComponent(pointsModel.getPoints());
+
 render(pageBodyContainer, statsComponent, RenderPosition.BEFOREEND);
 
 const tripControllerElement = new TripController(mainContentElement.getElement(), pointsModel, api);
 statsComponent.hide();
 
-menuComponent.setOnChange((menuItem)=>{
+menuComponent.setOnChange((menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       statsComponent.hide();
@@ -64,4 +65,5 @@ api.getPoints().then((points) => {
   tripControllerElement.render();
 });
 
-
+console.dir(pointsModel);
+console.dir(pointsModel.getPoints());

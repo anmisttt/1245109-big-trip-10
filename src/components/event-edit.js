@@ -6,6 +6,11 @@ import {printDate, getTime} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
+
 const createOffersMap = (offers, type) => {
   return offers.map((offer) => {
     return (
@@ -34,12 +39,12 @@ const createTypesList = (types, currentType) => {
   return types.map((type) => {
     return (`<div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}"
-  ${currentType === type ? `checked` : ``}>
+  ${currentType.toLowerCase() === type.toLowerCase() ? `checked` : ``}>
   <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type}-1">${type}</label></div>`);
   }).join(` `);
 };
 
-const editTripEventTemplate = (event) => {
+const editTripEventTemplate = (event, externalData) => {
   const {
     type,
     description,
@@ -59,6 +64,9 @@ const editTripEventTemplate = (event) => {
   const timeEnd = getTime(dateEnd);
   const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
   const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
+
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
 
   return (`<form class="event  trip-events__item event--edit" action="#" method="post">
                     <header class="event__header">
@@ -111,8 +119,8 @@ const editTripEventTemplate = (event) => {
                         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
                       </div>
 
-                      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                      <button class="event__reset-btn" type="reset">Delete</button>
+                      <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
+                      <button class="event__reset-btn" type="reset">${deleteButtonText}</button>
 
                       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
                       <label class="event__favorite-btn" for="event-favorite-1">
@@ -158,12 +166,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = null;
     this._flatpickr = null;
     this._deleteButtonClickHandler = null;
+    this._externalData = DefaultData;
     this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return editTripEventTemplate(this._event);
+    return editTripEventTemplate(this._event, this._externalData);
   }
 
   removeElement() {
@@ -210,6 +219,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._deleteButtonClickHandler = handler;
   }
 
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
+  }
+
   getData() {
     const form = this.getElement();
 
@@ -242,12 +256,19 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const element = this.getElement();
 
     const types = element.querySelectorAll(`.event__type-input`);
-
     types.forEach((type)=> {
       type.addEventListener(`change`, () => {
         this._event.type = type.value;
         this._event.icon = `img/icons/${type.value}.png`;
         this.rerender();
+      });
+    });
+
+    const offers = element.querySelectorAll(`.event__offer-selector`);
+    offers.forEach((offer) => {
+      offer.addEventListener(`click`, () => {
+        offer.classList.toggle(`checked`);
+        offer.querySelector(`.event__offer-checkbox`).classList.toggle(`checked`);
       });
     });
 
