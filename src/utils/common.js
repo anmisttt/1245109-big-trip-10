@@ -32,5 +32,5 @@ export const getRandomIntegerNumber = (min, max) => {
 };
 
 export const printDate = (date) => {
-  return moment(date).format(`DD/MM/YY`);
+  return moment(date).format(`dd/mm/yy HH:MM`);
 };

@@ -6,7 +6,6 @@ import TripController from './controllers/trip-controller.js';
 import MainContentComponent from './components/main-content.js';
 import StatsComponent from './components/stats.js';
 import PointsModel from './models/points.js';
-
 import {render, RenderPosition} from './utils/render.js';
 
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
@@ -17,9 +16,9 @@ const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 
 const mainTripElement = document.querySelector(`.trip-main`);
-const infoElement = mainTripElement.querySelector(`.trip-info`);
 
-render(infoElement, new TripInfoComponent(), RenderPosition.AFTERBEGIN);
+const tripInfoElement = new TripInfoComponent(pointsModel);
+render(mainTripElement, tripInfoElement, RenderPosition.AFTERBEGIN);
 
 const tripControlsElement = mainTripElement.querySelector(`.trip-controls`);
 
@@ -37,7 +36,7 @@ const pageBodyContainer = document.querySelectorAll(`.page-body__container`)[1];
 const mainContentElement = new MainContentComponent();
 render(pageBodyContainer, mainContentElement, RenderPosition.BEFOREEND);
 
-const statsComponent = new StatsComponent(pointsModel.getPoints());
+const statsComponent = new StatsComponent(pointsModel);
 
 render(pageBodyContainer, statsComponent, RenderPosition.BEFOREEND);
 
@@ -59,11 +58,9 @@ menuComponent.setOnChange((menuItem) => {
 
 export const destinationsApi = api.getDestinations();
 export const offersApi = api.getOffers();
-
 api.getPoints().then((points) => {
   pointsModel.setPoints(points);
   tripControllerElement.render();
+  tripInfoElement.rerender(pointsModel);
 });
 
-console.dir(pointsModel);
-console.dir(pointsModel.getPoints());

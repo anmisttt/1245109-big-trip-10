@@ -72,7 +72,7 @@ const renderMoneyChart = (moneyCtx, events) => {
   const types = renderTypes(events);
   return new Chart(moneyCtx, {
     // plugins: [window.ChartDataLabels],
-    type: `horizontalBar`,
+    type: `bar`,
     data: {
       labels: types,
       datasets: [{
@@ -97,7 +97,7 @@ const renderTransportChart = (transportCtx, events) => {
   const types = renderTransportTypes(events);
   return new Chart(transportCtx, {
     // plugins: [window.ChartDataLabels],
-    type: `horizontalBar`,
+    type: `bar`,
     data: {
       labels: types,
       datasets: [{
@@ -122,7 +122,7 @@ const renderTimeChart = (timeCtx, events) => {
   const types = renderTypes(events);
   return new Chart(timeCtx, {
     // plugins: [window.ChartDataLabels],
-    type: `horizontalBar`,
+    type: `bar`,
     data: {
       labels: types,
       datasets: [{
@@ -183,9 +183,9 @@ export default class StatsComponent extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    this._moneyChart = renderMoneyChart(moneyCtx, this._events);
-    this._transportChart = renderTransportChart(transportCtx, this._events);
-    this._timeChart = renderTimeChart(timeCtx, this._events);
+    this._moneyChart = renderMoneyChart(moneyCtx, this._events.getPoints());
+    this._transportChart = renderTransportChart(transportCtx, this._events.getPoints());
+    this._timeChart = renderTimeChart(timeCtx, this._events.getPoints());
   }
 
   _resetCharts() {
