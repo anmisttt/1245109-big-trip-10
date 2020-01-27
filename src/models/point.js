@@ -11,7 +11,7 @@ export default class PointModel {
     this.dateEnd = data[`date_to`] ? new Date(data[`date_to`]) : null;
     this.offers = new Set(data[`offers`]);
     this.isFavorite = Boolean(data[`is_favorite`]);
-    this.photos = data[`destination`].pictures.map((picture) => picture.src);
+    this.photos = data[`destination`].pictures;
   }
   toRAW() {
     return {

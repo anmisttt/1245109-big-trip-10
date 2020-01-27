@@ -1,17 +1,16 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 const countPrice = (points) => {
-  points.reduce((acc, point) => acc + point.price);
+  return points.reduce((acc, point) => acc + point.price, 0);
 };
 
 const createTripInfoTemplate = (pointsModel) => {
   const points = pointsModel.getPoints();
   const length = points.length;
-  console.log(points);
   return (`<section class="trip-main__trip-info  trip-info">
             <div class = "trip-info__main">
-              <h1 class = "trip-info__title" > ${(length > 0) ? points[0].town : ` `} &mdash; ${(length > 2) ? points[1].town : `...`} &mdash;
-            ${(length > 0) ? points[length].town : ` `} </h1>
+              <h1 class = "trip-info__title" > ${(length > 0) ? points[0].town : ` `} &mdash; ${(length === 3) ? points[1].town : `...`} &mdash;
+            ${(length > 0) ? points[length - 1].town : ` `} </h1>
 
               <p class = "trip-info__dates" > Mar 18 &nbsp; &mdash; &nbsp;
             21 </p> 

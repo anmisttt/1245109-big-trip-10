@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 // import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {printDate, getTime} from '../utils/common.js';
+import {printDate, getTime, generatePlaceholder} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
@@ -26,7 +26,7 @@ const createOffersMap = (offers, type) => {
 };
 
 const createPhotoMap = (photos) => {
-  return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(` `);
+  return photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(` `);
 };
 
 const createTownsList = (towns) => {
@@ -55,6 +55,7 @@ const editTripEventTemplate = (event, externalData) => {
     offers,
     dateStart,
     dateEnd,
+    isFavorite
   } = event;
 
   const offersMap = createOffersMap(Array.from(offers), type);
@@ -64,9 +65,11 @@ const editTripEventTemplate = (event, externalData) => {
   const timeEnd = getTime(dateEnd);
   const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
   const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
+  const placeholder = generatePlaceholder(type);
 
   const deleteButtonText = externalData.deleteButtonText;
   const saveButtonText = externalData.saveButtonText;
+  console.log(printDate(dateStart));
 
   return (`<form class="event  trip-events__item event--edit" action="#" method="post">
                     <header class="event__header">
@@ -91,7 +94,7 @@ const editTripEventTemplate = (event, externalData) => {
 
                       <div class="event__field-group  event__field-group--destination">
                         <label class="event__label  event__type-output"  for="event-destination-1">
-                          ${type}
+                          ${type} ${placeholder}
                         </label>
                         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
                         <datalist id="destination-list-1">
@@ -103,12 +106,12 @@ const editTripEventTemplate = (event, externalData) => {
                         <label class="visually-hidden" for="event-start-time-1">
                           From
                         </label>
-                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${printDate(dateStart)} ${timeStart}">
+                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${printDate(dateStart)}">
                         &mdash;
                         <label class="visually-hidden" for="event-end-time-1">
                           To
                         </label>
-                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${printDate(dateEnd)} ${timeEnd}">
+                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${printDate(dateEnd)}">
                       </div>
 
                       <div class="event__field-group  event__field-group--price">
@@ -122,7 +125,7 @@ const editTripEventTemplate = (event, externalData) => {
                       <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
                       <button class="event__reset-btn" type="reset">${deleteButtonText}</button>
 
-                      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+                      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${(isFavorite) ? `checked` : ``}>
                       <label class="event__favorite-btn" for="event-favorite-1">
                         <span class="visually-hidden">Add to favorite</span>
                         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -239,12 +242,16 @@ export default class EventEditComponent extends AbstractSmartComponent {
     }
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     this._flatpickr = flatpickr(startDateElement, {
+      enableTime: true,
+      dateFormat: `Y-m-d H:i`,
       altInput: true,
       allowInput: true,
       defaultDate: this._event.dateStart,
     });
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
     this._flatpickr = flatpickr(endDateElement, {
+      enableTime: true,
+      dateFormat: `Y-m-d H:i`,
       altInput: true,
       allowInput: true,
       defaultDate: this._event.dateEnd,
@@ -284,6 +291,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
     price.addEventListener(`change`, () => {
       this._event.price = price.value;
       this.rerender();
+    });
+
+    const favoriteButton = element.querySelector(`.event__favorite-btn`);
+    favoriteButton.addEventListener(`click`, () => {
+      this._event.isFavorite = !this._event.isFavorite;
     });
   }
 }

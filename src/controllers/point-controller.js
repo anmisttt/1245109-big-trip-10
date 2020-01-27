@@ -20,6 +20,7 @@ export const EmptyPoint = {
   offers: [],
   dateStart: null,
   dateEnd: null,
+  isFavorite: false
 };
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
@@ -33,7 +34,7 @@ const parseFormData = (formData, destinations, offers) => {
     'base_price': Number(formData.get(`event-price`)),
     'date_from': formData.get(`event-start-time`) ? new Date(formData.get(`event-start-time`)) : null,
     'date_to': formData.get(`event-end-time`) ? new Date(formData.get(`event-end-time`)) : null,
-    'is_favorite': false
+    'is_favorite': Boolean(formData.get(`event-favorite`))
   });
 };
 
@@ -72,14 +73,6 @@ export default class PointController {
           this._onDataChange(this, event, data);
         });
       });
-    });
-
-    this._eventEditComponent.setFavoriteClickHandler(() => {
-      const newPoint = PointModel.clone(event);
-      newPoint.isFavorite = !newPoint.isFavorite;
-
-      this._onDataChange(this, event, newPoint);
-
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {

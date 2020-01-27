@@ -1,4 +1,5 @@
 import ContentComponent from '../components/content.js';
+import TripInfoComponent from '../components/trip-info.js';
 import NoPointsComponent from '../components/no-points.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {render, RenderPosition} from '../utils/render.js';
@@ -23,6 +24,7 @@ export default class TripController {
     this._contentComponent = new ContentComponent();
     this._noPointsComponent = new NoPointsComponent();
     this._sortComponent = new SortComponent();
+    this._tripInfoComponent = new TripInfoComponent(this._pointsModel);
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -42,8 +44,13 @@ export default class TripController {
   }
 
   render() {
+    const mainTripElement = document.querySelector(`.trip-main`);
+
+    render(mainTripElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+
     const container = this._container;
     render(container, this._contentComponent, RenderPosition.BEFOREEND);
+
     const events = this._pointsModel.getPoints();
 
     const tripContentElement = this._contentComponent.getElement();
@@ -60,13 +67,13 @@ export default class TripController {
       let sortedEvents = [];
       switch (sortType) {
         case SortType.TIME:
-          sortedEvents = events.slice().sort((a, b) => a.timeStart - b.timeStart);
+          sortedEvents = events.slice().sort((b, a) => a.timeStart - b.timeStart);
           break;
         case SortType.PRICE:
-          sortedEvents = events.slice().sort((a, b) => a.price - b.price);
+          sortedEvents = events.slice().sort((a, b) => b.price - a.price);
           break;
         case SortType.EVENT:
-          sortedEvents = events.slice(0, events.length());
+          sortedEvents = events.slice(0, events.length);
           break;
       }
       tripContentElement.innerHTML = ``;
@@ -90,10 +97,12 @@ export default class TripController {
       if (newData === null) {
         pointController.destroy();
         this._updateEvents();
+        this._tripInfoComponent.rerender(this._pointsModel);
       } else {
         this._api.createPoint(newData)
         .then((PointModel) => {
           this._pointsModel.addPoint(PointModel);
+          this._tripInfoComponent.rerender(this._pointsModel);
           pointController.renderEvent(PointModel, EventControllerMode.DEFAULT);
           const destroyedPoint = this._showedEvents.pop();
           destroyedPoint.destroy();
@@ -108,6 +117,7 @@ export default class TripController {
       .then(() => {
         this._pointsModel.removePoint(oldData.id);
         this._updateEvents();
+        this._tripInfoComponent.rerender(this._pointsModel);
       })
       .catch(() => {
         pointController.shake();
@@ -120,22 +130,12 @@ export default class TripController {
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
           this._updateEvents();
         }
+        this._tripInfoComponent.rerender(this._pointsModel);
       })
       .catch(() => {
         pointController.shake();
       });
     }
-    // const events = this._pointsModel.getPoints();
-
-    // const index = events.findIndex((it) => it === oldData);
-
-    // if (index === -1) {
-    //   return;
-    // }
-
-    // events = [].concat(events.slice(0, index), newData, events.slice(index + 1));
-
-    // pointController.renderEvent(events[index]);
   }
 
   _onViewChange() {

@@ -17,9 +17,6 @@ const pointsModel = new PointsModel();
 
 const mainTripElement = document.querySelector(`.trip-main`);
 
-const tripInfoElement = new TripInfoComponent(pointsModel);
-render(mainTripElement, tripInfoElement, RenderPosition.AFTERBEGIN);
-
 const tripControlsElement = mainTripElement.querySelector(`.trip-controls`);
 
 const menuComponent = new MenuComponent();
@@ -61,6 +58,5 @@ export const offersApi = api.getOffers();
 api.getPoints().then((points) => {
   pointsModel.setPoints(points);
   tripControllerElement.render();
-  tripInfoElement.rerender(pointsModel);
 });
 

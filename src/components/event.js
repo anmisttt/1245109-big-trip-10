@@ -1,4 +1,4 @@
-import {getInterval, getTime} from '../utils/common.js';
+import {getInterval, getTime, generatePlaceholder} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 const createOffersMap = (offers) => {
@@ -26,13 +26,14 @@ const createTripEventTemplate = (event) => {
   const interval = getInterval(dateStart, dateEnd);
   const timeStart = getTime(dateStart);
   const timeEnd = getTime(dateEnd);
+  const placeholder = generatePlaceholder(type);
 
   return (`<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
                       <img class="event__type-icon" width="42" height="42" src=${icon} alt="Event type icon">
                     </div>
-                    <h3 class="event__title">${type} at ${town}</h3>
+                    <h3 class="event__title">${type[0].toUpperCase() + type.slice(1)} ${placeholder} ${town}</h3>
 
                     <div class="event__schedule">
                       <p class="event__time">

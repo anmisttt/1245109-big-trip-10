@@ -32,5 +32,9 @@ export const getRandomIntegerNumber = (min, max) => {
 };
 
 export const printDate = (date) => {
-  return moment(date).format(`dd/mm/yy HH:MM`);
+  return moment(date).format(`DD/MM/YYYY HH:mm`);
+};
+
+export const generatePlaceholder = (type) => {
+  return ((type === `Check-in`) || (type === `Sightseeing`) || (type === `Restaurant`)) ? `in` : `to`;
 };
