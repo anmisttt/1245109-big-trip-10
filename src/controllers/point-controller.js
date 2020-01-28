@@ -3,6 +3,7 @@ import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
 import PointModel from '../models/point.js';
 import {destinationsApi, offersApi} from '../main.js';
+import {getRandomIntegerNumber} from '../utils/common.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -11,6 +12,7 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
+  id: `${getRandomIntegerNumber(20, 1000)}`,
   type: `taxi`,
   destination: {},
   icon: `img/icons/taxi.png`,
@@ -18,8 +20,8 @@ export const EmptyPoint = {
   price: ``,
   town: ``,
   offers: [],
-  dateStart: null,
-  dateEnd: null,
+  dateStart: new Date(),
+  dateEnd: new Date(),
   isFavorite: false
 };
 

@@ -62,7 +62,7 @@ const countTime = (events, types) => {
   types.map((type, index) => {
     const trueEvents = events.filter((event) => event.type === type);
     types[index] = trueEvents.reduce((acc, event) => {
-      return acc + moment(event.dateStart).diff(moment(event.dateEnd), `minutes`);
+      return acc + moment(event.dateEnd).diff(moment(event.dateStart), `minutes`);
     }, 0);
   });
   return (types);

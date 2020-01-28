@@ -1,7 +1,12 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
+import moment from 'moment';
 
 const countPrice = (points) => {
   return points.reduce((acc, point) => acc + point.price, 0);
+};
+
+const printDate = (date) => {
+  return moment(date).format(`DD MMM`);
 };
 
 const createTripInfoTemplate = (pointsModel) => {
@@ -12,8 +17,8 @@ const createTripInfoTemplate = (pointsModel) => {
               <h1 class = "trip-info__title" > ${(length > 0) ? points[0].town : ` `} &mdash; ${(length === 3) ? points[1].town : `...`} &mdash;
             ${(length > 0) ? points[length - 1].town : ` `} </h1>
 
-              <p class = "trip-info__dates" > Mar 18 &nbsp; &mdash; &nbsp;
-            21 </p> 
+              <p class = "trip-info__dates" > ${(length > 0) ? printDate(points[0].dateStart) : ` `} &nbsp; &mdash; &nbsp;
+            ${(length > 0) ? printDate(points[length - 1].dateEnd) : ` `} </p> 
             </div>
 
             <p class="trip-info__cost">

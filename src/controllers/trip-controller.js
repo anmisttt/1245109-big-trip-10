@@ -100,10 +100,10 @@ export default class TripController {
         this._tripInfoComponent.rerender(this._pointsModel);
       } else {
         this._api.createPoint(newData)
-        .then((PointModel) => {
-          this._pointsModel.addPoint(PointModel);
+        .then((pointModel) => {
+          this._pointsModel.addPoint(pointModel);
           this._tripInfoComponent.rerender(this._pointsModel);
-          pointController.renderEvent(PointModel, EventControllerMode.DEFAULT);
+          pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
           const destroyedPoint = this._showedEvents.pop();
           destroyedPoint.destroy();
           this._showedEvents = [].concat(pointController, this._showedEvents);

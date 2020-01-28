@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 // import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {printDate, getTime, generatePlaceholder} from '../utils/common.js';
+import {printDate, generatePlaceholder} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
@@ -12,12 +12,12 @@ const DefaultData = {
 };
 
 const createOffersMap = (offers, type) => {
-  return offers.map((offer) => {
+  return offers.map((offer, index) => {
     return (
       `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" 
-    type="checkbox" name="event-offer-${type}">
-    <label class="event__offer-label" for="event-offer-${type}-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${index}" 
+    type="checkbox" name="event-offer-${type}" ${(offer.isChecked) ? `checked` : ``}>
+    <label class="event__offer-label" for="event-offer-${type}-${index}">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
     </label>
@@ -58,18 +58,16 @@ const editTripEventTemplate = (event, externalData) => {
     isFavorite
   } = event;
 
+
   const offersMap = createOffersMap(Array.from(offers), type);
   const photosMap = createPhotoMap(photos);
   const townsList = createTownsList(EventConsts.Towns);
-  const timeStart = getTime(dateStart);
-  const timeEnd = getTime(dateEnd);
   const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
   const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
   const placeholder = generatePlaceholder(type);
 
   const deleteButtonText = externalData.deleteButtonText;
   const saveButtonText = externalData.saveButtonText;
-  console.log(printDate(dateStart));
 
   return (`<form class="event  trip-events__item event--edit" action="#" method="post">
                     <header class="event__header">
@@ -243,7 +241,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     this._flatpickr = flatpickr(startDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i`,
+      dateFormat: `Y-m-d H:i:s`,
+      altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
       defaultDate: this._event.dateStart,
@@ -251,7 +250,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
     this._flatpickr = flatpickr(endDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i`,
+      dateFormat: `Y-m-d H:i:s`,
+      altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
       defaultDate: this._event.dateEnd,
@@ -272,10 +272,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
 
     const offers = element.querySelectorAll(`.event__offer-selector`);
-    offers.forEach((offer) => {
+    offers.forEach((offer, index) => {
       offer.addEventListener(`click`, () => {
-        offer.classList.toggle(`checked`);
-        offer.querySelector(`.event__offer-checkbox`).classList.toggle(`checked`);
+        if (offers[index].isChecked) {
+          offers[index].isChecked = false;
+        } else {
+          offers[index].isChecked = true;
+        }
       });
     });
 

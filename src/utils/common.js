@@ -5,16 +5,16 @@ export const getTime = (date) => {
 };
 
 export const getInterval = (date1, date2) => {
-  const interval = moment(date2).diff(moment(date1), `minutes`);
-  let formatInterval = interval;
-  if (interval < 60) {
-    formatInterval = `${moment(interval).format(`mm`)}M`;
-  } else if (interval < 24 * 60) {
-    formatInterval = `${moment(interval).format(`hh`)}h ` + `${moment(interval).format(`mm`)}M`;
+  const days = moment(date2).diff(moment(date1), `days`);
+  const hours = moment(date2).diff(moment(date1), `hours`) - days * 24;
+  const minutes = moment(date2).diff(moment(date1), `minutes`) - hours * 60;
+  if (days > 0) {
+    return (`${days}d ` + `${hours}h ` + `${minutes}M`);
+  } else if (hours > 0) {
+    return (`${hours}H ` + `${minutes}M`);
   } else {
-    formatInterval = `${moment(interval).format(`DD`)}d ` + `${moment(interval).format(`hh`)}h ` + `${moment(interval).format(`mm`)}M`;
+    return (`${minutes}M`);
   }
-  return (formatInterval);
 };
 
 export const getDate = () => {

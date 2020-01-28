@@ -22,7 +22,7 @@ const createTripEventTemplate = (event) => {
     dateEnd
   } = event;
 
-  const offersMap = createOffersMap(Array.from(offers));
+  const offersMap = createOffersMap(Array.from(offers).slice(0, 3));
   const interval = getInterval(dateStart, dateEnd);
   const timeStart = getTime(dateStart);
   const timeEnd = getTime(dateEnd);
