@@ -279,13 +279,14 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const offers = element.querySelectorAll(`.event__offer-selector`);
     offers.forEach((offer, index) => {
       offer.addEventListener(`click`, () => {
-        if (this._event.offers[index].isChecked) {
-          this._event.offers[index].isChecked = false;
+        if (offers[index].isChecked) {
+          offers[index].isChecked = false;
         } else {
-          this._event.offers[index].isChecked = true;
+          offers[index].isChecked = true;
         }
       });
     });
+
 
     const town = element.querySelector(`.event__input--destination`);
     town.addEventListener(`change`, () => {
