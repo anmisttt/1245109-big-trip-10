@@ -30,7 +30,6 @@ const SHAKE_ANIMATION_TIMEOUT = 600;
 const parseFormData = (formData) => {
 
   const currentType = formData.get(`event-type`);
-  console.log(formData.has(`event-offer`));
   return new PointModel({
     'offers': (currentType) ? offersApi.filter((offer) => offer.type === currentType.toLowerCase()).map((it) => it.offers)[0] : [],
     'type': (currentType) ? currentType.toLowerCase() : ``,
@@ -63,6 +62,10 @@ export default class PointController {
     this._eventComponent.setEventClickHandler(() => {
       this._changeEventOnEventEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    this._eventEditComponent.setEventEditClickHandler(() => {
+      this._changeEventEditOnEvent();
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -120,7 +123,7 @@ export default class PointController {
 
 
   _changeEventEditOnEvent() {
-    this._eventEditComponent.reset();
+    // this._eventEditComponent.reset();
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
     document.removeEventListener(`keydown`, this._onEscKeyDown);

@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 // import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {printDate, generatePlaceholder} from '../utils/common.js';
+import {generatePlaceholder} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
@@ -44,6 +44,7 @@ const createTypesList = (types, currentType) => {
   }).join(` `);
 };
 
+
 const editTripEventTemplate = (event, externalData) => {
   const {
     type,
@@ -53,8 +54,6 @@ const editTripEventTemplate = (event, externalData) => {
     price,
     town,
     offers,
-    dateStart,
-    dateEnd,
     isFavorite
   } = event;
 
@@ -94,7 +93,7 @@ const editTripEventTemplate = (event, externalData) => {
                         <label class="event__label  event__type-output"  for="event-destination-1">
                           ${type} ${placeholder}
                         </label>
-                        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
+                        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}"  onkeypress="return false" list="destination-list-1">
                         <datalist id="destination-list-1">
                           ${townsList}
                         </datalist>
@@ -137,16 +136,16 @@ const editTripEventTemplate = (event, externalData) => {
                     </header>
 
                     <section class="event__details">
-
-                      <section class="event__section  event__section--offers">
+                      ${(Array.from(offers).length > 0) ? `<section class="event__section  event__section--offers">
                         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                         <div class="event__available-offers">
-                          ${offersMap}
+                          ${offersMap} 
                         </div>
-                      </section>
+                      </section>` : ``}
+                      
 
-                      <section class="event__section  event__section--destination">
+                      ${(description) ? `<section class="event__section  event__section--destination">
                         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                         <p class="event__destination-description">${description}</p>
 
@@ -155,7 +154,8 @@ const editTripEventTemplate = (event, externalData) => {
                             ${photosMap}
                           </div>
                         </div>
-                      </section>
+                      </section>` : ``}
+                      
                     </section>
                   </form>`);
 };
@@ -202,6 +202,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
+  setEventEditClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+  }
+
   rerender() {
     super.rerender();
     this._applyFlatpickr();
@@ -227,7 +232,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    console.log(form);
 
     return new FormData(form);
   }
@@ -282,7 +286,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
         }
       });
     });
-    console.log(this._event.offers);
 
     const town = element.querySelector(`.event__input--destination`);
     town.addEventListener(`change`, () => {
