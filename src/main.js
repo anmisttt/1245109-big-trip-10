@@ -1,5 +1,4 @@
 import API from './api.js';
-import TripInfoComponent from './components/trip-info.js';
 import MenuComponent, {MenuItem} from './components/menu.js';
 import FilterController from './controllers/filter-controller.js';
 import TripController from './controllers/trip-controller.js';
@@ -53,8 +52,19 @@ menuComponent.setOnChange((menuItem) => {
   }
 });
 
-export const destinationsApi = api.getDestinations();
-export const offersApi = api.getOffers();
+let destinationsApi = [];
+let offersApi = [];
+
+Promise.all([api.getDestinations(), api.getOffers()]).then(([response1, response2]) => {
+  destinationsApi = response1;
+  offersApi = response2;
+});
+export {
+  destinationsApi,
+  offersApi
+};
+
+
 api.getPoints().then((points) => {
   pointsModel.setPoints(points);
   tripControllerElement.render();

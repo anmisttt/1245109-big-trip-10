@@ -16,7 +16,7 @@ const createOffersMap = (offers, type) => {
     return (
       `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${index}" 
-    type="checkbox" name="event-offer-${type}" ${(offer.isChecked) ? `checked` : ``}>
+    type="checkbox" name="event-offer" ${(offer.isChecked) ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${type}-${index}">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -104,12 +104,12 @@ const editTripEventTemplate = (event, externalData) => {
                         <label class="visually-hidden" for="event-start-time-1">
                           From
                         </label>
-                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${printDate(dateStart)}">
+                        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
                         &mdash;
                         <label class="visually-hidden" for="event-end-time-1">
                           To
                         </label>
-                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${printDate(dateEnd)}">
+                        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
                       </div>
 
                       <div class="event__field-group  event__field-group--price">
@@ -178,7 +178,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   removeElement() {
     if (this._flatpickr) {
-      this._flatpickr.destroy();
+      // this._flatpickr.destroy();
       this._flatpickr = null;
     }
 
@@ -227,6 +227,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
+    console.log(form);
 
     return new FormData(form);
   }
@@ -241,7 +242,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     this._flatpickr = flatpickr(startDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i:s`,
+      dateFormat: `Y-m-d H:i`,
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
@@ -250,7 +251,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
     this._flatpickr = flatpickr(endDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i:s`,
+      dateFormat: `Y-m-d H:i`,
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
@@ -274,13 +275,14 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const offers = element.querySelectorAll(`.event__offer-selector`);
     offers.forEach((offer, index) => {
       offer.addEventListener(`click`, () => {
-        if (offers[index].isChecked) {
-          offers[index].isChecked = false;
+        if (this._event.offers[index].isChecked) {
+          this._event.offers[index].isChecked = false;
         } else {
-          offers[index].isChecked = true;
+          this._event.offers[index].isChecked = true;
         }
       });
     });
+    console.log(this._event.offers);
 
     const town = element.querySelector(`.event__input--destination`);
     town.addEventListener(`change`, () => {

@@ -1,7 +1,7 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import Chart from 'chart.js';
 import moment from 'moment';
-import 'chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const createStatsTemplate = () => {
   return (`<section class="statistics">
@@ -71,7 +71,7 @@ const countTime = (events, types) => {
 const renderMoneyChart = (moneyCtx, events) => {
   const types = renderTypes(events);
   return new Chart(moneyCtx, {
-    // plugins: [window.ChartDataLabels],
+    plugins: [ChartDataLabels],
     type: `bar`,
     data: {
       labels: types,
@@ -96,7 +96,7 @@ const renderMoneyChart = (moneyCtx, events) => {
 const renderTransportChart = (transportCtx, events) => {
   const types = renderTransportTypes(events);
   return new Chart(transportCtx, {
-    // plugins: [window.ChartDataLabels],
+    plugins: [ChartDataLabels],
     type: `bar`,
     data: {
       labels: types,
@@ -121,7 +121,7 @@ const renderTransportChart = (transportCtx, events) => {
 const renderTimeChart = (timeCtx, events) => {
   const types = renderTypes(events);
   return new Chart(timeCtx, {
-    // plugins: [window.ChartDataLabels],
+    plugins: [ChartDataLabels],
     type: `bar`,
     data: {
       labels: types,
