@@ -16,7 +16,7 @@ const createOffersMap = (offers, type) => {
     return (
       `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${index}" 
-    type="checkbox" name="event-offer" ${(offer.isChecked) ? `checked` : ``}>
+    type="checkbox" name="event-offer-${type}-${index}" ${(offer.isChecked) ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${type}-${index}">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -246,7 +246,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     this._flatpickr = flatpickr(startDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i`,
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
@@ -255,7 +254,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
     this._flatpickr = flatpickr(endDateElement, {
       enableTime: true,
-      dateFormat: `Y-m-d H:i`,
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
@@ -266,6 +264,20 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+
+    const dateStart = element.querySelector(`#event-start-time-1`);
+    if (dateStart) {
+      dateStart.addEventListener(`change`, () => {
+        this._event.dateStart = dateStart.value;
+      });
+    }
+
+    const dateEnd = element.querySelector(`#event-end-time-1`);
+    if (dateEnd) {
+      dateEnd.addEventListener(`change`, () => {
+        this._event.dateEnd = dateEnd.value;
+      });
+    }
 
     const types = element.querySelectorAll(`.event__type-input`);
     types.forEach((type)=> {

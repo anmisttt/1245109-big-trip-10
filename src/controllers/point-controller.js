@@ -28,11 +28,12 @@ export const EmptyPoint = {
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const parseFormData = (formData) => {
-
-  const currentType = formData.get(`event-type`);
+  const currentType = formData.get(`event-type`).toLowerCase();
+  console.log(currentType);
+  console.log(formData.get(`event-offer-${currentType}-1`));
   return new PointModel({
-    'offers': (currentType) ? offersApi.filter((offer) => offer.type === currentType.toLowerCase()).map((it) => it.offers)[0] : [],
-    'type': (currentType) ? currentType.toLowerCase() : ``,
+    'offers': (currentType) ? offersApi.filter((offer) => offer.type === currentType).map((it) => it.offers)[0] : [],
+    'type': (currentType) ? currentType : ``,
     'destination': destinationsApi.filter((destination) => destination.name === formData.get(`event-destination`))[0],
     'base_price': Number(formData.get(`event-price`)),
     'date_from': formData.get(`event-start-time`) ? new Date(formData.get(`event-start-time`)) : null,
@@ -70,12 +71,12 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const formData = this._eventEditComponent.getData();
-      const data = parseFormData(formData);
-      this._onDataChange(this, event, data);
       this._eventEditComponent.setData({
         saveButtonText: `Saving...`,
       });
+      const formData = this._eventEditComponent.getData();
+      const data = parseFormData(formData);
+      this._onDataChange(this, event, data);
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
