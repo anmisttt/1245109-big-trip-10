@@ -9,7 +9,7 @@ export default class PointModel {
     this.town = data[`destination`].name;
     this.dateStart = data[`date_from`] ? new Date(data[`date_from`]) : null;
     this.dateEnd = data[`date_to`] ? new Date(data[`date_to`]) : null;
-    this.offers = new Set(data[`offers`].map((offer) => {
+    this.offers = Array.from(data[`offers`].map((offer) => {
       offer.isChecked = false;
       return offer;
     }));

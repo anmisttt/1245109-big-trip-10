@@ -1,3 +1,4 @@
+import moment from 'moment';
 import ContentComponent from '../components/content.js';
 import TripInfoComponent from '../components/trip-info.js';
 import NoPointsComponent from '../components/no-points.js';
@@ -67,7 +68,7 @@ export default class TripController {
       let sortedEvents = [];
       switch (sortType) {
         case SortType.TIME:
-          sortedEvents = events.slice().sort((b, a) => a.timeStart - b.timeStart);
+          sortedEvents = events.slice().sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
           break;
         case SortType.PRICE:
           sortedEvents = events.slice().sort((a, b) => b.price - a.price);
@@ -92,15 +93,17 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
-    if (oldData === EmptyPoint) {
+    // для новой точки приходит уже обновленная oldData, поэтому условие не срабатывает
+    if (this._isEmptyObject(oldData.destination)) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
         this._updateEvents();
         this._tripInfoComponent.rerender(this._pointsModel);
       } else {
-        this._api.createPoint(newData)
-        .then((pointModel) => {
+        this._api.createPoint(newData).then((pointModel) => {
+          debugger;
+          // этот код не срабатывает
           this._pointsModel.addPoint(pointModel);
           this._tripInfoComponent.rerender(this._pointsModel);
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
@@ -124,8 +127,10 @@ export default class TripController {
       });
     } else {
       this._api.updatePoint(oldData.id, newData).then((pointModel) => {
+        // oldData приходит без обновления офферов
         newData.id = oldData.id;
-        const isSuccess = this._pointsModel.updatePoints(oldData.id, newData);
+        const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
+        // сюда обновление офферов не дошло
         if (isSuccess) {
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
           this._updateEvents();
@@ -136,6 +141,15 @@ export default class TripController {
         pointController.shake();
       });
     }
+  }
+
+  _isEmptyObject(obj) {
+    for (let i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   _onViewChange() {

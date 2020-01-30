@@ -3,7 +3,6 @@ import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
 import PointModel from '../models/point.js';
 import {destinationsApi, offersApi} from '../main.js';
-import {getRandomIntegerNumber} from '../utils/common.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -12,13 +11,12 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
-  id: `${getRandomIntegerNumber(20, 1000)}`,
   type: `taxi`,
   destination: {},
   icon: `img/icons/taxi.png`,
   photos: [],
   price: ``,
-  town: ``,
+  town: `Geneva`,
   offers: [],
   dateStart: new Date(),
   dateEnd: new Date(),
@@ -27,12 +25,11 @@ export const EmptyPoint = {
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
-const parseFormData = (formData) => {
+const parseFormData = (formData, offers) => {
   const currentType = formData.get(`event-type`).toLowerCase();
-  console.log(currentType);
-  console.log(formData.get(`event-offer-${currentType}-1`));
+  const isTypeChanged = !formData.has(`event-offer-${currentType}`);
   return new PointModel({
-    'offers': (currentType) ? offersApi.filter((offer) => offer.type === currentType).map((it) => it.offers)[0] : [],
+    'offers': (isTypeChanged) ? offersApi.filter((offer) => offer.type === currentType).map((it) => it.offers)[0] : offers,
     'type': (currentType) ? currentType : ``,
     'destination': destinationsApi.filter((destination) => destination.name === formData.get(`event-destination`))[0],
     'base_price': Number(formData.get(`event-price`)),
@@ -54,6 +51,7 @@ export default class PointController {
     this._mode = Mode.DEFAULT;
   }
   renderEvent(event, mode) {
+    // в event offers без проверки
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._eventComponent = new EventComponent(event);
@@ -75,7 +73,7 @@ export default class PointController {
         saveButtonText: `Saving...`,
       });
       const formData = this._eventEditComponent.getData();
-      const data = parseFormData(formData);
+      const data = parseFormData(formData, event.offers);
       this._onDataChange(this, event, data);
     });
 

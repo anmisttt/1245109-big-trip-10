@@ -6,6 +6,8 @@ import {generatePlaceholder} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
+// нужно передавать отсюда информацию в PointsModel, чтобы значения обновлялись сразу после изменения формы
+
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
@@ -16,7 +18,7 @@ const createOffersMap = (offers, type) => {
     return (
       `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${index}" 
-    type="checkbox" name="event-offer-${type}-${index}" ${(offer.isChecked) ? `checked` : ``}>
+    type="checkbox" name="event-offer-${type}" ${(offer.isChecked) ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${type}-${index}">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -56,7 +58,6 @@ const editTripEventTemplate = (event, externalData) => {
     offers,
     isFavorite
   } = event;
-
 
   const offersMap = createOffersMap(Array.from(offers), type);
   const photosMap = createPhotoMap(photos);
@@ -194,6 +195,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+    // здесь информация об офферах обновляется
   }
 
   setSubmitHandler(handler) {
@@ -208,8 +210,10 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   rerender() {
+    // если обновлять только иконку и тип, то уйдет проблема с новым ивентом, потому что город не успеет обновиться
     super.rerender();
     this._applyFlatpickr();
+    // здесь информация об офферах обновляется
   }
 
   reset() {
@@ -279,6 +283,14 @@ export default class EventEditComponent extends AbstractSmartComponent {
       });
     }
 
+    const offers = element.querySelectorAll(`.event__offer-checkbox`);
+    offers.forEach((offer, index) => {
+      offer.addEventListener(`click`, () => {
+        // из-за того что rerender меняет разметку, а разметка не меняется, ничего не происходит, можно обновить класс
+        this._event.offers[index].isChecked = offers[index].checked;
+      });
+    });
+
     const types = element.querySelectorAll(`.event__type-input`);
     types.forEach((type)=> {
       type.addEventListener(`change`, () => {
@@ -288,30 +300,16 @@ export default class EventEditComponent extends AbstractSmartComponent {
       });
     });
 
-    const offers = element.querySelectorAll(`.event__offer-selector`);
-    offers.forEach((offer, index) => {
-      offer.addEventListener(`click`, () => {
-        if (offers[index].isChecked) {
-          offers[index].isChecked = false;
-        } else {
-          offers[index].isChecked = true;
-        }
-      });
-    });
-
 
     const town = element.querySelector(`.event__input--destination`);
     town.addEventListener(`change`, () => {
       this._event.town = town.value;
-
-      this.rerender();
     });
 
 
     const price = element.querySelector(`.event__input--price`);
     price.addEventListener(`change`, () => {
       this._event.price = price.value;
-      this.rerender();
     });
 
     const favoriteButton = element.querySelector(`.event__favorite-btn`);
