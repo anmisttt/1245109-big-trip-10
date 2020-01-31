@@ -37,7 +37,6 @@ const API = class {
   }
 
   createPoint(point) {
-    debugger;
     return this._load({
       url: `points`,
       method: Method.POST,
@@ -47,7 +46,7 @@ const API = class {
       })
     })
       .then((response) => response.json())
-      .then(PointModel.parsePoints);
+      .then(PointModel.parsePoint);
   }
 
   updatePoint(id, data) {

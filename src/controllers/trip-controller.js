@@ -102,7 +102,6 @@ export default class TripController {
         this._tripInfoComponent.rerender(this._pointsModel);
       } else {
         this._api.createPoint(newData).then((pointModel) => {
-          debugger;
           // этот код не срабатывает
           this._pointsModel.addPoint(pointModel);
           this._tripInfoComponent.rerender(this._pointsModel);

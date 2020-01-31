@@ -171,6 +171,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._externalData = DefaultData;
     this._applyFlatpickr();
     this._subscribeOnEvents();
+
+    window.z = this;
   }
 
   getTemplate() {
@@ -192,16 +194,16 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setSubmitHandler(this._submitHandler);
+    this.setSubmitHandler(()=>this._submitHandler);
     this._subscribeOnEvents();
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     // здесь информация об офферах обновляется
   }
 
   setSubmitHandler(handler) {
-    this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler(this._event);
 
-    this._submitHandler = handler;
+    this.getElement().addEventListener(`submit`, this._submitHandler);
   }
 
   setEventEditClickHandler(handler) {
