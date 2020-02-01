@@ -2,15 +2,22 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import moment from 'moment';
 
 const countPrice = (points) => {
-  return points.reduce((acc, point) => acc + point.price, 0);
+  const pointsPrice = points.reduce((acc, point) => acc + point.price, 0);
+  let offersPrice = 0;
+  points.map((point) => point.offers).forEach((offers) => offers.forEach((offer) =>{
+    if (offer.isChecked === true) {
+      offersPrice += offer.price;
+    }
+  }));
+  return (pointsPrice + offersPrice);
 };
 
-const printDate = (date) => {
+export const printDate = (date) => {
   return moment(date).format(`DD MMM`);
 };
 
 const createTripInfoTemplate = (pointsModel) => {
-  const points = pointsModel.getPoints();
+  const points = pointsModel.getPoints().sort((a, b) => a.dateStart - b.dateEnd);
   const length = points.length;
   return (`<section class="trip-main__trip-info  trip-info">
             <div class = "trip-info__main">

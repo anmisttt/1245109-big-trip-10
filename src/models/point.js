@@ -10,7 +10,9 @@ export default class PointModel {
     this.dateStart = data[`date_from`] ? new Date(data[`date_from`]) : null;
     this.dateEnd = data[`date_to`] ? new Date(data[`date_to`]) : null;
     this.offers = Array.from(data[`offers`].map((offer) => {
-      offer.isChecked = false;
+      if (offer.isChecked === undefined) {
+        offer.isChecked = false;
+      }
       return offer;
     }));
     this.isFavorite = Boolean(data[`is_favorite`]);

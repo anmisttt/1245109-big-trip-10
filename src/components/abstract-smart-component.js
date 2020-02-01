@@ -11,7 +11,8 @@ export default class AbstractSmartcomponent extends AbstractComponent {
 
     this.removeElement();
 
-    const newElement = this.getElement(); // то же самое что и oldElement
+    const newElement = this.getElement();
+
 
     parent.replaceChild(newElement, oldElement);
 

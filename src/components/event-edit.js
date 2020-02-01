@@ -1,5 +1,5 @@
 import flatpickr from 'flatpickr';
-// import he from 'he';
+import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 import {generatePlaceholder} from '../utils/common.js';
@@ -64,7 +64,8 @@ const editTripEventTemplate = (event, externalData) => {
   const townsList = createTownsList(EventConsts.Towns);
   const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
   const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
-  const placeholder = generatePlaceholder(type);
+  const placeholder = generatePlaceholder(type.toLowerCase());
+  const currentPrice = he.encode(String(price));
 
   const deleteButtonText = externalData.deleteButtonText;
   const saveButtonText = externalData.saveButtonText;
@@ -117,7 +118,7 @@ const editTripEventTemplate = (event, externalData) => {
                           <span class="visually-hidden">Price</span>
                           &euro;
                         </label>
-                        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${currentPrice}">
                       </div>
 
                       <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
@@ -168,6 +169,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = null;
     this._flatpickr = null;
     this._deleteButtonClickHandler = null;
+    this._setEventEditClickHandler = null;
     this._externalData = DefaultData;
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -181,7 +183,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   removeElement() {
     if (this._flatpickr) {
-      // this._flatpickr.destroy();
+      this._flatpickr.destroy();
       this._flatpickr = null;
     }
 
@@ -197,6 +199,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setSubmitHandler(()=>this._submitHandler);
     this._subscribeOnEvents();
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+    this.setEventEditClickHandler(this._setEventEditClickHandler);
     // здесь информация об офферах обновляется
   }
 
@@ -204,6 +207,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = handler(this._event);
 
     this.getElement().addEventListener(`submit`, this._submitHandler);
+    this._setEventEditClickHandler = handler;
   }
 
   setEventEditClickHandler(handler) {
@@ -212,10 +216,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   rerender() {
-    // если обновлять только иконку и тип, то уйдет проблема с новым ивентом, потому что город не успеет обновиться
     super.rerender();
     this._applyFlatpickr();
-    // здесь информация об офферах обновляется
   }
 
   reset() {
@@ -288,7 +290,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     const offers = element.querySelectorAll(`.event__offer-checkbox`);
     offers.forEach((offer, index) => {
       offer.addEventListener(`click`, () => {
-        // из-за того что rerender меняет разметку, а разметка не меняется, ничего не происходит, можно обновить класс
         this._event.offers[index].isChecked = offers[index].checked;
       });
     });
@@ -298,7 +299,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
       type.addEventListener(`change`, () => {
         this._event.type = type.value;
         this._event.icon = `img/icons/${type.value}.png`;
-        this.rerender();
       });
     });
 

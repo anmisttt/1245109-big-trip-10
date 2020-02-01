@@ -25,14 +25,11 @@ export const EmptyPoint = {
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
-const parseFormData = (formData, offers, c) => {
+const parseFormData = (formData, event) => {
   const currentType = formData.get(`event-type`).toLowerCase();
   const isTypeChanged = !formData.has(`event-offer-${currentType}`);
-  console.log(c.offers.slice());
-  console.log(offers.slice());
-  console.count(1);
   return new PointModel({
-    'offers': (isTypeChanged) ? offersApi.filter((offer) => offer.type === currentType)[0].offers : offers.slice(),
+    'offers': (isTypeChanged) ? offersApi.filter((offer) => offer.type === currentType)[0].offers : event.offers.slice(),
     'type': (currentType) ? currentType : ``,
     'destination': destinationsApi.filter((destination) => destination.name === formData.get(`event-destination`))[0],
     'base_price': Number(formData.get(`event-price`)),
@@ -54,7 +51,6 @@ export default class PointController {
     this._mode = Mode.DEFAULT;
   }
   renderEvent(event, mode) {
-    // в event offers без проверки
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._eventComponent = new EventComponent(event);
@@ -73,7 +69,7 @@ export default class PointController {
     this._eventEditComponent.setSubmitHandler((oldEvent) => (evt) => {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
-      const data = parseFormData(formData, JSON.parse(JSON.stringify(oldEvent.offers)), JSON.parse(JSON.stringify(oldEvent)));
+      const data = parseFormData(formData, JSON.parse(JSON.stringify(oldEvent)));
       this._onDataChange(this, event, data);
       this._eventEditComponent.setData({
         saveButtonText: `Saving...`,
@@ -126,7 +122,6 @@ export default class PointController {
 
 
   _changeEventEditOnEvent() {
-    // this._eventEditComponent.reset();
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
     document.removeEventListener(`keydown`, this._onEscKeyDown);

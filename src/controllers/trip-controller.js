@@ -66,15 +66,17 @@ export default class TripController {
 
     this._sortComponent.changeSortTypeHandler((sortType) => {
       let sortedEvents = [];
+      const points = this._pointsModel.getPoints();
+
       switch (sortType) {
         case SortType.TIME:
-          sortedEvents = events.slice().sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
+          sortedEvents = points.sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
           break;
         case SortType.PRICE:
-          sortedEvents = events.slice().sort((a, b) => b.price - a.price);
+          sortedEvents = points.sort((a, b) => b.price - a.price);
           break;
         case SortType.EVENT:
-          sortedEvents = events.slice(0, events.length);
+          sortedEvents = points.sort((a, b) => a.dateStart - b.dateEnd);
           break;
       }
       tripContentElement.innerHTML = ``;
