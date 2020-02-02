@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export const getTime = (date) => {
-  return moment(date).format(`HH:MM`);
+  return moment(date).format(`HH:mm`);
 };
 
 export const getInterval = (date1, date2) => {

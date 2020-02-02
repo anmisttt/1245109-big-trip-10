@@ -10,15 +10,6 @@ import {removeAllChild} from '../utils/common.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-// const renderEvents = (events, container, onDataChange, onViewChange) => {
-//   return events.map((event) => {
-//     const pointController = new PointController(container, onDataChange, onViewChange);
-//     pointController.renderEvent(event, EventControllerMode.DEFAULT);
-//     return pointController;
-//   });
-// };
-
-
 const renderEvents = (eventDays, container, onDataChange, onViewChange) => {
   const points = [];
   removeAllChild(container);
@@ -71,14 +62,16 @@ export default class TripController {
 
   generateDays(events) {
     const days = {};
+    const sortedEvents = events.sort((a, b) => a.dateStart - b.dateStart);
 
-    events.forEach((event) => {
+    sortedEvents.forEach((event) => {
       const data = moment(event.dateStart).format(`DD/MM/YYYY`);
 
       if (data in days) {
         days[data].push(event);
       } else {
         days[data] = [];
+        days[data].push(event);
       }
     });
     return days;
@@ -121,7 +114,7 @@ export default class TripController {
           date = null;
           break;
         case SortType.EVENT:
-          sortedEvents = points.sort((a, b) => a.dateStart - b.dateEnd);
+          sortedEvents = points.slice(0, points.length);
           date = sortedEvents[0].dateStart;
           break;
       }
@@ -150,10 +143,10 @@ export default class TripController {
         this._tripInfoComponent.rerender(this._pointsModel);
       } else {
         this._api.createPoint(newData).then((pointModel) => {
-          // этот код не срабатывает
           this._pointsModel.addPoint(pointModel);
           this._tripInfoComponent.rerender(this._pointsModel);
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
+          this._updateEvents();
           const destroyedPoint = this._showedEvents.pop();
           destroyedPoint.destroy();
           this._showedEvents = [].concat(pointController, this._showedEvents);

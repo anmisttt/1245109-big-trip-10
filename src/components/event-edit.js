@@ -6,8 +6,6 @@ import {generatePlaceholder} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EventConsts} from '../const.js';
 
-// нужно передавать отсюда информацию в PointsModel, чтобы значения обновлялись сразу после изменения формы
-
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
@@ -198,7 +196,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._subscribeOnEvents();
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setEventEditClickHandler(this._setEventEditClickHandler);
-    // здесь информация об офферах обновляется
   }
 
   setSubmitHandler(handler) {
@@ -244,8 +241,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   _applyFlatpickr() {
     if (this._flatpickr) {
-      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
-      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
       this._flatpickr.destroy();
       this._flatpickr = null;
     }
@@ -296,16 +291,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     types.forEach((type)=> {
       type.addEventListener(`click`, () => {
         this._event.type = type.value;
-        // console.log(this._event.type);
-        // const container = element.querySelector(`.event__type-list`);
-        // const oldElement = container.querySelector(`.event__type-group`);
-        // const transportTypesList = createTypesList(EventConsts.Types.slice(0, 7), this._event.type, `Transfer`);
-        // const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), this._event.type, `Activity`);
-        // const newElement = document.createElement(`fieldset`);
-        // newElement.setAttribute(`class`, `event__type-group`);
-        // newElement.appendChild(transportTypesList);
-        // newElement.appendChild(activityTypesList);
-        // container.replaceChild(newElement, oldElement);
       });
     });
 

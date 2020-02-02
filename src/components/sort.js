@@ -67,7 +67,6 @@ export default class SortComponent extends AbstractSmartComponent {
       }
 
       this._currenSortType = sortType;
-      // this.rerender();
 
       handler(this._currenSortType);
     }));
