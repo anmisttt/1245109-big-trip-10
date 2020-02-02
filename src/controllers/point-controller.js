@@ -2,7 +2,7 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
 import PointModel from '../models/point.js';
-import {destinationsApi, offersApi} from '../main.js';
+import {apiOffersDestinations} from '../main.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -25,9 +25,10 @@ export const EmptyPoint = {
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
-const parseFormData = (formData, event) => {
+const parseFormData = (formData, event, destinationsApi, offersApi) => {
   const currentType = formData.get(`event-type`).toLowerCase();
   const isTypeChanged = !formData.has(`event-offer-${currentType}`);
+
   return new PointModel({
     'offers': (isTypeChanged) ? offersApi.filter((offer) => offer.type === currentType)[0].offers : event.offers.slice(),
     'type': (currentType) ? currentType : ``,
@@ -69,8 +70,10 @@ export default class PointController {
     this._eventEditComponent.setSubmitHandler((oldEvent) => (evt) => {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
-      const data = parseFormData(formData, JSON.parse(JSON.stringify(oldEvent)));
-      this._onDataChange(this, event, data);
+      apiOffersDestinations.then(([destinationsApi, offersApi]) => {
+        const data = parseFormData(formData, JSON.parse(JSON.stringify(oldEvent)), destinationsApi, offersApi);
+        this._onDataChange(this, event, data);
+      });
       this._eventEditComponent.setData({
         saveButtonText: `Saving...`,
       });

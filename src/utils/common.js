@@ -38,3 +38,9 @@ export const printDate = (date) => {
 export const generatePlaceholder = (type) => {
   return ((type === `check-in`) || (type === `sightseeing`) || (type === `restaurant`)) ? `in` : `to`;
 };
+
+export const removeAllChild = (container) => {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+};

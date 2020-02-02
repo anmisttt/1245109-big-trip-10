@@ -2,19 +2,44 @@ import moment from 'moment';
 import ContentComponent from '../components/content.js';
 import TripInfoComponent from '../components/trip-info.js';
 import NoPointsComponent from '../components/no-points.js';
+import DayComponent from '../components/day.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {render, RenderPosition} from '../utils/render.js';
 import PointController, {Mode as EventControllerMode, EmptyPoint} from './point-controller.js';
+import {removeAllChild} from '../utils/common.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-const renderEvents = (events, container, onDataChange, onViewChange) => {
-  return events.map((event) => {
-    const pointController = new PointController(container, onDataChange, onViewChange);
-    pointController.renderEvent(event, EventControllerMode.DEFAULT);
-    return pointController;
+// const renderEvents = (events, container, onDataChange, onViewChange) => {
+//   return events.map((event) => {
+//     const pointController = new PointController(container, onDataChange, onViewChange);
+//     pointController.renderEvent(event, EventControllerMode.DEFAULT);
+//     return pointController;
+//   });
+// };
+
+
+const renderEvents = (eventDays, container, onDataChange, onViewChange) => {
+  const points = [];
+  removeAllChild(container);
+  Object.entries(eventDays).forEach(([date, events], index) => {
+    if (!events.length) {
+      return;
+    }
+    const dayComponent = new DayComponent(date, (index + 1));
+    const dayContainer = dayComponent.getElement().querySelector(`.trip-events__list`);
+
+    events.forEach((event) => {
+      const pointController = new PointController(dayContainer, onDataChange, onViewChange);
+      pointController.renderEvent(event, EventControllerMode.DEFAULT);
+      points.push(pointController);
+    });
+    render(container, dayComponent, RenderPosition.BEFOREEND);
   });
+
+  return points;
 };
+
 
 export default class TripController {
   constructor(container, pointsModel, api) {
@@ -44,6 +69,21 @@ export default class TripController {
     this._container.classList.remove(HIDDEN_CLASS);
   }
 
+  generateDays(events) {
+    const days = {};
+
+    events.forEach((event) => {
+      const data = moment(event.dateStart).format(`DD/MM/YYYY`);
+
+      if (data in days) {
+        days[data].push(event);
+      } else {
+        days[data] = [];
+      }
+    });
+    return days;
+  }
+
   render() {
     const mainTripElement = document.querySelector(`.trip-main`);
 
@@ -60,26 +100,33 @@ export default class TripController {
       render(tripContentElement, this._noPointsComponent, RenderPosition.BEFOREEND);
     }
 
-    this._showedEvents = renderEvents(events, tripContentElement, this._onDataChange, this._onViewChange);
+    const eventDays = this.generateDays(events);
+
+    this._showedEvents = renderEvents(eventDays, tripContentElement, this._onDataChange, this._onViewChange);
 
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
 
     this._sortComponent.changeSortTypeHandler((sortType) => {
       let sortedEvents = [];
       const points = this._pointsModel.getPoints();
+      let date = null;
 
       switch (sortType) {
         case SortType.TIME:
           sortedEvents = points.sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
+          date = null;
           break;
         case SortType.PRICE:
           sortedEvents = points.sort((a, b) => b.price - a.price);
+          date = null;
           break;
         case SortType.EVENT:
           sortedEvents = points.sort((a, b) => a.dateStart - b.dateEnd);
+          date = sortedEvents[0].dateStart;
           break;
       }
       tripContentElement.innerHTML = ``;
+      sortedEvents = (date === null) ? {'false': sortedEvents} : this.generateDays(sortedEvents);
       this._showedEvents = renderEvents(sortedEvents, tripContentElement, this._onDataChange, this._onViewChange);
     });
   }
@@ -95,7 +142,6 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
-    // для новой точки приходит уже обновленная oldData, поэтому условие не срабатывает
     if (this._isEmptyObject(oldData.destination)) {
       this._creatingPoint = null;
       if (newData === null) {
@@ -128,10 +174,8 @@ export default class TripController {
       });
     } else {
       this._api.updatePoint(oldData.id, newData).then((pointModel) => {
-        // oldData приходит без обновления офферов
         newData.id = oldData.id;
         const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
-        // сюда обновление офферов не дошло
         if (isSuccess) {
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
           this._updateEvents();
@@ -169,7 +213,7 @@ export default class TripController {
   _renderEvents(events) {
     const tripContentElement = this._contentComponent.getElement();
 
-    const newEvents = renderEvents(events, tripContentElement, this._onDataChange, this._onViewChange);
+    const newEvents = renderEvents(this.generateDays(events), tripContentElement, this._onDataChange, this._onViewChange);
     this._showedEvents = this._showedEvents.concat(newEvents);
   }
 

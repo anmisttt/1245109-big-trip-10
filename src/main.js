@@ -52,18 +52,8 @@ menuComponent.setOnChange((menuItem) => {
   }
 });
 
-let destinationsApi = [];
-let offersApi = [];
 
-Promise.all([api.getDestinations(), api.getOffers()]).then(([response1, response2]) => {
-  destinationsApi = response1;
-  offersApi = response2;
-});
-export {
-  destinationsApi,
-  offersApi
-};
-
+export const apiOffersDestinations = Promise.all([api.getDestinations(), api.getOffers()]);
 
 api.getPoints().then((points) => {
   pointsModel.setPoints(points);

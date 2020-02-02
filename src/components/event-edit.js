@@ -37,9 +37,11 @@ const createTownsList = (towns) => {
   });
 };
 
-const createTypesList = (types, currentType) => {
+const createTypesList = (types, currentType, placeholder) => {
   return types.map((type) => {
-    return (`<div class="event__type-item">
+    return (`
+    <legend class="visually-hidden">${placeholder}</legend>
+    <div class="event__type-item">
   <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}"
   ${currentType.toLowerCase() === type.toLowerCase() ? `checked` : ``}>
   <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type}-1">${type}</label></div>`);
@@ -62,8 +64,8 @@ const editTripEventTemplate = (event, externalData) => {
   const offersMap = createOffersMap(Array.from(offers), type);
   const photosMap = createPhotoMap(photos);
   const townsList = createTownsList(EventConsts.Towns);
-  const transportTypesList = createTypesList(EventConsts.Types.slice(0, 6), type);
-  const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type);
+  const transportTypesList = createTypesList(EventConsts.Types.slice(0, 7), type, `Transfer`);
+  const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), type, `Activity`);
   const placeholder = generatePlaceholder(type.toLowerCase());
   const currentPrice = he.encode(String(price));
 
@@ -79,15 +81,11 @@ const editTripEventTemplate = (event, externalData) => {
                         </label>
                         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-                        <div class="event__type-list">
-                          <fieldset class="event__type-group">
-                            <legend class="visually-hidden">Transfer</legend>
-                            ${transportTypesList}
-                          </fieldset>
-                          <fieldset class="event__type-group">
-                            <legend class="visually-hidden">Activity</legend>
-                            ${activityTypesList}
-                          </fieldset>
+                        <div class="event__type-list">   
+                        <fieldset class="event__type-group">                       
+                            ${transportTypesList}                      
+                            ${activityTypesList}     
+                          </fieldset>                
                         </div>
                       </div>
 
@@ -296,9 +294,18 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     const types = element.querySelectorAll(`.event__type-input`);
     types.forEach((type)=> {
-      type.addEventListener(`change`, () => {
+      type.addEventListener(`click`, () => {
         this._event.type = type.value;
-        this._event.icon = `img/icons/${type.value}.png`;
+        // console.log(this._event.type);
+        // const container = element.querySelector(`.event__type-list`);
+        // const oldElement = container.querySelector(`.event__type-group`);
+        // const transportTypesList = createTypesList(EventConsts.Types.slice(0, 7), this._event.type, `Transfer`);
+        // const activityTypesList = createTypesList(EventConsts.Types.slice(7, 10), this._event.type, `Activity`);
+        // const newElement = document.createElement(`fieldset`);
+        // newElement.setAttribute(`class`, `event__type-group`);
+        // newElement.appendChild(transportTypesList);
+        // newElement.appendChild(activityTypesList);
+        // container.replaceChild(newElement, oldElement);
       });
     });
 

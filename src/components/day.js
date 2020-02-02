@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {printDate} from './trip-info.js';
+import moment from 'moment';
 
 export default class DayComponent extends AbstractComponent {
   constructor(date, counter) {
@@ -9,10 +9,10 @@ export default class DayComponent extends AbstractComponent {
   }
   getTemplate() {
     return (`<li class="trip-days__item  day">
-              <div class="day__info">
+             ${(this._date !== `false`) ? `<div class="day__info">
                 <span class="day__counter">${this._counter}</span>
-                <time class="day__date" datetime="${this._dateStart}">${printDate(this._date)}</time>
-              </div> </li>`);
+                <time class="day__date" datetime="${this._date}">${moment(this._date, `DD/MM/YYYY`).format(`DD MMM`)}</time>` : `` }
+              </div><ul class="trip-events__list"></ul> </li>`);
   }
 
 }
