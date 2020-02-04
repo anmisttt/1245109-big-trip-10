@@ -52,11 +52,9 @@ menuComponent.setOnChange((menuItem) => {
   }
 });
 
-
-export const apiOffersDestinations = Promise.all([api.getDestinations(), api.getOffers()]);
-
 api.getPoints().then((points) => {
   pointsModel.setPoints(points);
   tripControllerElement.render();
 });
 
+export const apiOffersDestinations = Promise.all([api.getDestinations(), api.getOffers()]);

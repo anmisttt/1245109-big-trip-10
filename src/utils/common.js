@@ -17,22 +17,8 @@ export const getInterval = (date1, date2) => {
   }
 };
 
-export const getDate = () => {
-  const targetDate = new Date();
-  const sign = Math.random() > 0.5 ? 1 : -1;
-  const diffValue = sign * getRandomIntegerNumber(0, 7);
-
-  targetDate.setDate(targetDate.getDate() + diffValue);
-
-  return targetDate;
-};
-
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor((max - min) * Math.random());
-};
-
-export const printDate = (date) => {
-  return moment(date).format(`DD/MM/YYYY HH:mm`);
 };
 
 export const generatePlaceholder = (type) => {

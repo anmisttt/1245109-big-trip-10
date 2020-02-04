@@ -11,7 +11,7 @@ export const futurePoints = (events, today) => {
 };
 
 export const pastPoints = (events, today) => {
-  return events.filter((event) => (moment(event.dateStart).isBefore(moment(today))));
+  return events.filter((event) => (moment(event.dateEnd).isBefore(moment(today))));
 };
 
 export const getPointsByFilter = (points, filterType) => {

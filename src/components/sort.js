@@ -72,5 +72,27 @@ export default class SortComponent extends AbstractSmartComponent {
     }));
   }
 
+  getSortTypeHandler(handler) {
+    this.getElement().querySelectorAll(`.trip-sort__input`).forEach((sort) => sort.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+
+      if (evt.target.tagName !== `INPUT`) {
+        return;
+      }
+
+      const sortType = evt.target.dataset.sortType;
+
+
+      if (this._currenSortType === sortType) {
+        return;
+      }
+
+      this._currenSortType = sortType;
+
+      handler(this._currenSortType);
+    }));
+  }
+
   recoveryListeners() {}
 }

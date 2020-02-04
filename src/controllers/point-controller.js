@@ -4,13 +4,13 @@ import {render, replace, remove, RenderPosition} from '../utils/render.js';
 import PointModel from '../models/point.js';
 import {apiOffersDestinations} from '../main.js';
 
-export const Mode = {
+const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
 };
 
-export const EmptyPoint = {
+const EmptyPoint = {
   type: `taxi`,
   destination: {},
   icon: `img/icons/taxi.png`,
@@ -160,3 +160,5 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
+
+export {Mode, EmptyPoint};

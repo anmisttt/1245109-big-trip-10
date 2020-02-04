@@ -12,12 +12,12 @@ const countPrice = (points) => {
   return (pointsPrice + offersPrice);
 };
 
-export const printDate = (date) => {
+const printDate = (date) => {
   return moment(date).format(`DD MMM`);
 };
 
 const createTripInfoTemplate = (pointsModel) => {
-  const points = pointsModel.getPoints().sort((a, b) => a.dateStart - b.dateEnd);
+  const points = pointsModel.getPoints().sort((a, b) => a.dateStart - b.dateStart);
   const length = points.length;
   return (`<section class="trip-main__trip-info  trip-info">
             <div class = "trip-info__main">
