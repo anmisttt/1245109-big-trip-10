@@ -21,11 +21,11 @@ const createTripInfoTemplate = (pointsModel) => {
   const length = points.length;
   return (`<section class="trip-main__trip-info  trip-info">
             <div class = "trip-info__main">
-              <h1 class = "trip-info__title" > ${(length > 0) ? points[0].town : ` `} &mdash; ${(length === 3) ? points[1].town : `...`} &mdash;
-            ${(length > 0) ? points[length - 1].town : ` `} </h1>
+              <h1 class = "trip-info__title" > ${(length > 0) ? points[0].town : ` `} ${(length > 1) ? (`&mdash; ${(length > 2) ? `${(length === 3) ? points[1].town : `...`} &mdash;` : ``}
+            ${(length > 0) ? points[length - 1].town : ` `}`) : ` `} </h1>
 
-              <p class = "trip-info__dates" > ${(length > 0) ? printDate(points[0].dateStart) : ` `} &nbsp; &mdash; &nbsp;
-            ${(length > 0) ? printDate(points[length - 1].dateEnd) : ` `} </p> 
+              <p class = "trip-info__dates" > ${(length > 0) ? printDate(points[0].dateStart) : ` `} ${(length > 1) ? `&nbsp; &mdash; &nbsp;` : `` }
+            ${(length > 1) ? printDate(points[length - 1].dateEnd) : ` `} </p> 
             </div>
 
             <p class="trip-info__cost">

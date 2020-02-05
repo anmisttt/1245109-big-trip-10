@@ -18,6 +18,7 @@ export default class PointModel {
     this.isFavorite = Boolean(data[`is_favorite`]);
     this.photos = data[`destination`].pictures;
   }
+
   toRAW() {
     return {
       'id': this.id,
@@ -37,9 +38,5 @@ export default class PointModel {
 
   static parsePoints(data) {
     return data.map(PointModel.parsePoint);
-  }
-
-  static clone(data) {
-    return new PointModel(data.toRAW());
   }
 }

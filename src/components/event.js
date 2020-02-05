@@ -74,4 +74,9 @@ export default class EventComponent extends AbstractComponent {
     this.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, handler);
   }
+
+  removeEventClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+    .removeEventListener(`click`, handler);
+  }
 }

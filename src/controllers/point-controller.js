@@ -155,6 +155,14 @@ export default class PointController {
   }
 
   destroy() {
+    this._eventComponent.removeEventClickHandler(() => {
+      this._changeEventOnEventEdit();
+      document.addEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    this._eventEditComponent.removeEventEditClickHandler(() => {
+      this._changeEventEditOnEvent();
+    });
     remove(this._eventComponent);
     remove(this._eventEditComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);

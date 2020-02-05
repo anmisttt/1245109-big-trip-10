@@ -52,6 +52,7 @@ export default class TripController {
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
 
     this._sortType = SortType.EVENT;
+    this._tripContentElement = this._contentComponent.getElement();
   }
 
   hide() {
@@ -89,15 +90,13 @@ export default class TripController {
 
     const events = this._pointsModel.getPoints();
 
-    const tripContentElement = this._contentComponent.getElement();
-
     if (events.length === 0) {
-      render(tripContentElement, this._noPointsComponent, RenderPosition.BEFOREEND);
+      render(this._tripContentElement, this._noPointsComponent, RenderPosition.BEFOREEND);
+    } else {
+      const eventDays = this.generateDays(events);
+
+      this._showedEvents = renderEvents(eventDays, this._tripContentElement, this._onDataChange, this._onViewChange);
     }
-
-    const eventDays = this.generateDays(events);
-
-    this._showedEvents = renderEvents(eventDays, tripContentElement, this._onDataChange, this._onViewChange);
 
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
 
@@ -110,41 +109,41 @@ export default class TripController {
   }
 
   sort(points, sortType) {
-    const tripContentElement = this._contentComponent.getElement();
-    let sortedEvents = [];
-    let date = null;
-
-    switch (sortType) {
-      case SortType.TIME:
-        sortedEvents = points.slice().sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
-        date = null;
-        this._sortType = SortType.TIME;
-        break;
-      case SortType.PRICE:
-        sortedEvents = points.slice().sort((a, b) => b.price - a.price);
-        date = null;
-        this._sortType = SortType.PRICE;
-        break;
-      case SortType.EVENT:
-        sortedEvents = points.slice().sort((a, b) => moment(a.dateStart).diff(moment(b.dateStart)));
-        date = sortedEvents[0].dateStart;
-        this._sortType = SortType.EVENT;
-        break;
+    if (points.length === 0) {
+      render(this._tripContentElement, this._noPointsComponent, RenderPosition.BEFOREEND);
+    } else {
+      let sortedEvents = [];
+      let date = null;
+      switch (sortType) {
+        case SortType.TIME:
+          sortedEvents = points.slice().sort((b, a) => moment(a.dateEnd).diff(moment(a.dateStart)) - moment(b.dateEnd).diff(moment(b.dateStart)));
+          date = null;
+          this._sortType = SortType.TIME;
+          break;
+        case SortType.PRICE:
+          sortedEvents = points.slice().sort((a, b) => b.price - a.price);
+          date = null;
+          this._sortType = SortType.PRICE;
+          break;
+        case SortType.EVENT:
+          sortedEvents = points.slice().sort((a, b) => moment(a.dateStart).diff(moment(b.dateStart)));
+          date = sortedEvents[0].dateStart;
+          this._sortType = SortType.EVENT;
+          break;
+      }
+      this._tripContentElement.innerHTML = ``;
+      sortedEvents = (date === null) ? {
+        'false': sortedEvents
+      } : this.generateDays(sortedEvents);
+      this._showedEvents = renderEvents(sortedEvents, this._tripContentElement, this._onDataChange, this._onViewChange);
     }
-    tripContentElement.innerHTML = ``;
-    sortedEvents = (date === null) ? {
-      'false': sortedEvents
-    } : this.generateDays(sortedEvents);
-    this._showedEvents = renderEvents(sortedEvents, tripContentElement, this._onDataChange, this._onViewChange);
   }
 
   createPoint() {
     if (this._creatingPoint) {
       return;
     }
-
-    const tripContentElement = this._contentComponent.getElement();
-    this._creatingPoint = new PointController(tripContentElement, this._onDataChange, this._onViewChange);
+    this._creatingPoint = new PointController(this._tripContentElement, this._onDataChange, this._onViewChange);
     this._creatingPoint.renderEvent(EmptyPoint, EventControllerMode.ADDING);
   }
 
@@ -161,9 +160,6 @@ export default class TripController {
           this._tripInfoComponent.rerender(this._pointsModel);
           pointController.renderEvent(pointModel, EventControllerMode.DEFAULT);
           this._updateEvents();
-          const destroyedPoint = this._showedEvents.pop();
-          destroyedPoint.destroy();
-          this._showedEvents = [].concat(pointController, this._showedEvents);
         })
         .catch(() => {
           pointController.shake();
@@ -215,13 +211,6 @@ export default class TripController {
   _updateEvents() {
     this._removePoints();
     this.sort(this._pointsModel.getPoints(), this._sortType);
-  }
-
-  _renderEvents(events) {
-    const tripContentElement = this._contentComponent.getElement();
-
-    const newEvents = renderEvents(this.generateDays(events), tripContentElement, this._onDataChange, this._onViewChange);
-    this._showedEvents = this._showedEvents.concat(newEvents);
   }
 
   _removePoints() {

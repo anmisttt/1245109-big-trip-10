@@ -17,10 +17,6 @@ export default class Points {
     return getPointsByFilter(this._points, this._activeFilterType);
   }
 
-  getAllPoints() {
-    return this._points;
-  }
-
   addPoint(point) {
     this._points = [].concat(point, this._points);
     this._callHandlers(this._dataChangeHandlers);

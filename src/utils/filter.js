@@ -1,20 +1,20 @@
 import moment from 'moment';
 
-export const FilterType = {
+const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`
 };
 
-export const futurePoints = (events, today) => {
+const futurePoints = (events, today) => {
   return events.filter((event) => (moment(event.dateStart).isAfter(moment(today))));
 };
 
-export const pastPoints = (events, today) => {
+const pastPoints = (events, today) => {
   return events.filter((event) => (moment(event.dateEnd).isBefore(moment(today))));
 };
 
-export const getPointsByFilter = (points, filterType) => {
+const getPointsByFilter = (points, filterType) => {
   const nowDate = new Date();
   switch (filterType) {
     case FilterType.EVERYTHING:
@@ -25,5 +25,6 @@ export const getPointsByFilter = (points, filterType) => {
       return futurePoints(points, nowDate);
   }
   return points;
-}
-;
+};
+
+export {FilterType, futurePoints, pastPoints, getPointsByFilter};

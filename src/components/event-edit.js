@@ -186,11 +186,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     super.removeElement();
   }
 
-  setFavoriteClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`).
-    addEventListener(`click`, handler);
-  }
-
   recoveryListeners() {
     this.setSubmitHandler(()=>this._submitHandler);
     this._subscribeOnEvents();
@@ -210,15 +205,14 @@ export default class EventEditComponent extends AbstractSmartComponent {
       .addEventListener(`click`, handler);
   }
 
+  removeEventEditClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .removeEventListener(`click`, handler);
+  }
+
   rerender() {
     super.rerender();
     this._applyFlatpickr();
-  }
-
-  reset() {
-    this._event.town = this.getElement().querySelector(`.event__input--destination`).value;
-    this._event.price = this.getElement().querySelector(`.event__input--price`).value;
-    this.rerender();
   }
 
   setDeleteButtonClickHandler(handler) {
