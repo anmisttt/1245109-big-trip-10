@@ -27,4 +27,19 @@ const removeAllChild = (container) => {
   }
 };
 
-export {getTime, getInterval, generatePlaceholder, removeAllChild};
+const getEmptyPoint = () => {
+  return {
+    type: `taxi`,
+    destination: {},
+    icon: `img/icons/taxi.png`,
+    photos: [],
+    price: ``,
+    town: `Geneva`,
+    offers: [],
+    dateStart: new Date(),
+    dateEnd: new Date(),
+    isFavorite: false
+  };
+};
+
+export {getTime, getInterval, generatePlaceholder, removeAllChild, getEmptyPoint};

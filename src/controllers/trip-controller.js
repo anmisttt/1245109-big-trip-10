@@ -5,8 +5,8 @@ import NoPointsComponent from '../components/no-points.js';
 import DayComponent from '../components/day.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {render, RenderPosition} from '../utils/render.js';
-import PointController, {Mode as EventControllerMode, EmptyPoint} from './point-controller.js';
-import {removeAllChild} from '../utils/common.js';
+import PointController, {Mode as EventControllerMode} from './point-controller.js';
+import {removeAllChild, getEmptyPoint} from '../utils/common.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
@@ -144,7 +144,7 @@ export default class TripController {
       return;
     }
     this._creatingPoint = new PointController(this._tripContentElement, this._onDataChange, this._onViewChange);
-    this._creatingPoint.renderEvent(EmptyPoint, EventControllerMode.ADDING);
+    this._creatingPoint.renderEvent(getEmptyPoint(), EventControllerMode.ADDING);
   }
 
   _onDataChange(pointController, oldData, newData) {

@@ -3,24 +3,12 @@ import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
 import PointModel from '../models/point.js';
 import {apiOffersDestinations} from '../main.js';
+import {getEmptyPoint} from '../utils/common.js';
 
 const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
-};
-
-const EmptyPoint = {
-  type: `taxi`,
-  destination: {},
-  icon: `img/icons/taxi.png`,
-  photos: [],
-  price: ``,
-  town: `Geneva`,
-  offers: [],
-  dateStart: new Date(),
-  dateEnd: new Date(),
-  isFavorite: false
 };
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
@@ -141,7 +129,7 @@ export default class PointController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
       if (this._mode === Mode.ADDING) {
-        this._onDataChange(this, EmptyPoint, null);
+        this._onDataChange(this, getEmptyPoint(), null);
       }
       this._changeEventEditOnEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
@@ -169,4 +157,4 @@ export default class PointController {
   }
 }
 
-export {Mode, EmptyPoint};
+export {Mode};
